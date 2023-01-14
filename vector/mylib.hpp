@@ -6,13 +6,14 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/12 14:53:35 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/14 16:49:16 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/14 17:56:13 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MYLIB_HPP
 #define MYLIB_HPP
-#include "iterator_traits.hpp"
+
+#include "../iterators/iterator_traits.hpp"
 
 template <class _ForwardIterator, class _Size, class _Tp>
 _ForwardIterator
