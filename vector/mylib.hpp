@@ -6,18 +6,19 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/12 14:53:35 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/12 14:56:15 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/14 16:49:16 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MYLIB_HPP
 #define MYLIB_HPP
+#include "iterator_traits.hpp"
 
 template <class _ForwardIterator, class _Size, class _Tp>
 _ForwardIterator
 my_uninitialized_fill_n(_ForwardIterator __f, _Size __n, const _Tp& __x)
 {
-    typedef typename iterator_traits<_ForwardIterator>::value_type value_type;
+    typedef typename ft::iterator_traits<_ForwardIterator>::value_type value_type;
     _ForwardIterator __s = __f;
     try
     {
@@ -37,7 +38,7 @@ template <class _InputIterator, class _ForwardIterator>
 _ForwardIterator
 my_uninitialized_copy(_InputIterator __f, _InputIterator __l, _ForwardIterator __r)
 {
-    typedef typename iterator_traits<_ForwardIterator>::value_type value_type;
+    typedef typename ft::iterator_traits<_ForwardIterator>::value_type value_type;
     _ForwardIterator __s = __r;
     try
     {

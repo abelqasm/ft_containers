@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   iterator.hpp                                       :+:      :+:    :+:   */
+/*   iterator_traits.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 12:46:44 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/10 12:13:57 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/14 16:48:55 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ITERATOR_HPP
-#define ITERATOR_HPP
+#ifndef ITERATOR_TRAITS_HPP
+#define ITERATOR_TRAITS_HPP
 
 namespace ft
 {
@@ -24,6 +24,26 @@ namespace ft
         typedef typename Iterator::reference            reference;
         typedef typename Iterator::iterator_category    iterator_category;
     };
+    
+    template< class T >
+    struct iterator_traits<T*>
+    {
+        typedef ptrdiff_t                           difference_type;
+        typedef T                                   value_type;
+        typedef T*                                  pointer;
+        typedef T&                                  reference;
+        typedef std::random_access_iterator_tag     iterator_category;
+    };
+    
+    template< class T >
+    struct iterator_traits<const T*>
+    {
+        typedef ptrdiff_t                           difference_type;
+        typedef T                                   value_type;
+        typedef const T*                            pointer;
+        typedef const T&                            reference;
+        typedef std::random_access_iterator_tag     iterator_category;
+    }; 
 }
 
 #endif

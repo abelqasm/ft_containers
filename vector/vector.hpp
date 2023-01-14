@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/12 18:08:47 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/14 17:28:45 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 #define VECTOR_HPP
 
 #include <memory>
-#include <mylib.hpp>
+#include "mylib.hpp"
+#include "iterator_traits.hpp"
 
 namespace ft
 {
@@ -22,9 +23,9 @@ namespace ft
     class vector
     {
         private:
-            T*          elemnts;
-            size_type   numElemnts;
-            size_type   sizeElemnts;
+            T*          _container;
+            size_type   _containerSize;
+            size_type   _containerCapacity;
 
         public::
             typedef T                                           value_type;
@@ -46,33 +47,53 @@ namespace ft
             //constructors
             explicit vector (const allocator_type& alloc = allocator_type())
             {
-                sizeElemnts = numElemnts = 0;
-                elemnts = alloc.allocate(0);
+                _containerCapacity = _containerSize = 0;
+                _container = alloc.allocate(0);
             }
             explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
             {
-                sizeElemnts = numElemnts = n;
-                elemnts = alloc.allocate(n);
-                uninitialized_fill_n(elemnts, n, val);
+                _containerCapacity = _containerSize = n;
+                _container = alloc.allocate(n);
+                my_uninitialized_fill_n(_container, n, val);
             }
             template <class InputIterator>
             vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
             {
-                sizeElemnts = numElemnts = (last - first);
-                elemnts = alloc.allocate(last - first);
-                uninitialized_copy(first, last, elemnts);
+                _containerCapacity = _containerSize = (last - first);
+                _container = alloc.allocate(last - first);
+                my_uninitialized_copy(first, last, _container);
             }
             vector (const vector& x)
             {
+                _containerCapacity = x.capacity();
+                _containerSize = x.size();
+                _container = alloc.allocate(_containerCapacity);
+                my_uninitialized_copy(x.begin(), x.end(), _container);
             }
+            //destructor
             ~vector()
-            {   
+            {
+                for (iterator it = data(); it != end(); it++)
+                    alloc.destroy(&it);
+                alloc.deallocate(_container, _containerCapacity);
             }
-        
+            // assignment operator
             vector& operator= (const vector& x)
             {
+                if (this == &x)
+                    return *this;
+                if (_containerCapacity < x.size())
+                {
+                    for (iterator it = data(); it != end(); it++)
+                        alloc.destroy(&it);
+                    alloc.deallocate(_container, _containerCapacity);
+                    _containerCapacity = x.capacity();
+                    _container = alloc.allocate(_containerCapacity);
+                }
+                _containerSize = x.size();
+                my_uninitialized_copy(x.begin(), x.end(), _container);
+                return *this;
             }
-            vector<T,Allocator>& operator=(const vector<T,Allocator>& x);
             template <class InputIterator>
             void assign(InputIterator first, InputIterator last);
             void assign(size_type n, const T& u);
@@ -95,60 +116,56 @@ namespace ft
             // Element access
             reference       operator[](size_type n)
             {
-                return  elemnts[n];
+                return  _container[n];
             }
             const_reference operator[](size_type n) const
             {
-                return  elemnts[n];
+                return  _container[n];
             }
             reference       at(size_type n)
             {
-                if (n >= numElemnts)
+                if (n >= _containerSize)
                     throw std::out_of_range("out of range");
-                return elemnts[n];  
+                return _container[n];  
             }
             const_reference at(size_type n) const
             {
-                if (n >= numElemnts)
+                if (n >= _containerSize)
                     throw std::out_of_range("out of range");
-                return elemnts[n];
+                return _container[n];
             }
 
             reference       front()
             {
-                return elemnts[0];
+                return _container[0];
             }
             const_reference front() const
             {
-                return elemnts[0];
+                return _container[0];
             }
             reference       back()
             {
-                if (numElemnts == 0)
-                    return elemnts[0];
-                return elemnts[numElemnts - 1];
+                return _container[_containerSize - 1];
             }
             const_reference back() const
             {
-                if (numElemnts == 0)
-                    return elemnts[0];
-                return elemnts[numElemnts - 1];
+                return _container[_containerSize - 1];
             }
 
             value_type*       data()
             {
-                return elemnts;
+                return _container;
             }
             const value_type* data() const
             {
-                return elemnts;
+                return _container;
             }
 
         //-------------------------------------------------------------------------------------------------//
             // Capacity member functions
             size_type size() const
             {
-                return numElemnts;
+                return _containerSize;
             }
             size_type max_size() const
             {
@@ -156,60 +173,92 @@ namespace ft
             }
             size_type capacity() const
             {
-                return sizeElemnts;
+                return _containerCapacity;
             }
             bool empty() const
             {
-                return numElemnts == 0;
+                return _containerSize == 0;
             }
+            // Capacity modifiers
             void reserve(size_type n)
             {
-                if (n <= sizeElemnts)
+                if (n <= _containerCapacity)
                     return;
                 T* tempMem = alloc.allocate(n);
-                my_uninitialized_copy(elemnts, elemnts + numElemnts, tempMem);
-                for (size_type i = 0; i < numElemnts; i++)
-                    alloc.destroy(&elemnts[i]);
-                alloc.deallocate(elemnts, sizeElemnts);
-                elemnts = tempMem;
-                sizeElemnts = n;
+                my_uninitialized_copy(_container, _container + _containerSize, tempMem);
+                for (size_type i = 0; i < _containerSize; i++)
+                    alloc.destroy(&_container[i]);
+                alloc.deallocate(_container, _containerCapacity);
+                _container = tempMem;
+                _containerCapacity = n;
             }
             void resize (size_type n, value_type val = value_type())
             {
-                if (n <= numElemnts)
+                if (n <= _containerSize)
                 {
-                    for (size_type i = n; i < sizeElemnts; i++)
-                        alloc.destroy(&elemnts[i]);
-                    numElemnts = n;
+                    for (iterator it = data(); it != end(); it++)
+                        alloc.destroy(&it);
+                    _containerSize = n;
                     return;
                 }
                 else
                     reserve(n);
-                my_uninitialized_fill_n(elemnts + numElemnts, n - numElemnts, val);
-                numElemnts = n;
+                my_uninitialized_fill_n(_container + _containerSize, n - _containerSize, val);
+                _containerSize = n;
             }
 
         //-------------------------------------------------------------------------------------------------//
-            //Modifiers
+            //Modifiers member functions
+            //insert
             iterator insert (iterator position, const value_type& val)
             {
-                if (numElemnts + 1 > sizeElemnts)
-                    reserve(sizeElemnts * 2);
-                my_uninitialized_copy(elemnts + (position - elemnts), elemnts + numElemnts, elemnts + (position - elemnts) + 1);
-                alloc.construct(elemnts + (position - elemnts), val);
-                numElemnts++;
+                if (_containerSize + 1 > _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                my_uninitialized_copy(position, _container + _containerSize, position + 1);
+                alloc.construct(position, val);
+                _containerSize++;
                 return position;
             }
             void insert (iterator position, size_type n, const value_type& val)
             {
-                if (numElemnts + n > sizeElemnts)
-                    reserve(sizeElemnts * 2);
-                my_uninitialized_copy(elemnts + (position - elemnts), elemnts + numElemnts, elemnts + (position - elemnts) + n);
-                my_uninitialized_fill_n(elemnts + (position - elemnts), n, val);
-                numElemnts += n;
+                if (_containerSize + n > _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                my_uninitialized_copy(position , _container + _containerSize, position + n);
+                my_uninitialized_fill_n(position, n, val);
+                _containerSize += n;
             }
             template <class InputIterator>
-            void insert (iterator position, InputIterator first, InputIterator last);
+            void insert (iterator position, InputIterator first, InputIterator last)
+            {
+                if (_containerSize + (last - first) > _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                my_uninitialized_copy(position, _container + _containerSize, position + (last - first));
+                my_uninitialized_copy(first, last, position);
+                _containerSize += (last - first);   
+            }
+            //erase
+            iterator erase(iterator position)
+            {
+                alloc.destroy(position);
+                my_uninitialized_copy(position + 1, _container + _containerSize, position);
+                _containerSize--;
+                return position;
+            }
+            iterator erase(iterator first, iterator last)
+            {
+                for (iterator it = first; it != last; it++)
+                    alloc.destroy(it);
+                my_uninitialized_copy(last, _container + _containerSize, first);
+                _containerSize -= (last - first);
+                return first;
+            }
+            //clear
+            void clear()
+            {
+                for (iterator it = data(); it != end(); it++)
+                    alloc.destroy(&it);
+                _containerSize = 0;
+            }
     };
 }
 
