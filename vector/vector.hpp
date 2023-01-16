@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/15 18:57:16 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/16 16:01:08 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,19 @@
 #define VECTOR_HPP
 
 #include <memory>
-#include "mylib.hpp"
 #include "random_acces_iterator.hpp"
 #include "../iterators/reverse_iterator.hpp"
+#include "../enable_if.hpp"
 
 namespace ft
 {
-    template < class T, class Allocator = std::allocator<T> , class size_type = typename Allocator::size_type>
+    template < class T, class Allocator = std::allocator<T> >
     class vector
     {
-        private:
-            Allocator   _alloc;
-            T*          _container;
-            size_type   _containerSize;
-            size_type   _containerCapacity;
-
-        public:
+    public:
             typedef T                                           value_type;
             typedef Allocator                                   allocator_type;
-            // typedef typename allocator_type::size_type          size_type;
+            typedef typename allocator_type::size_type          size_type;
             typedef typename allocator_type::reference          reference;
             typedef typename allocator_type::const_reference    const_reference;
             typedef typename allocator_type::pointer            pointer;
@@ -43,59 +37,66 @@ namespace ft
             typedef ft::random_acces_iterator<const_pointer>    const_iterator;
             typedef ft::reverse_iterator<iterator>              reverse_iterator;
             typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
-
-
+        
+    private:
+            Allocator   _alloc;
+            T*          _container;
+            size_type   _containerSize;
+            size_type   _containerCapacity;
+    public:
         //-------------------------------------------------------------------------------------------------//
             //constructors
             explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc)
             {
                 _containerCapacity = _containerSize = 0;
-                _container = _alloc.allocate(0);
+                _container = NULL;
             }
             explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc(alloc)
             {
                 _containerCapacity = _containerSize = n;
                 _container = _alloc.allocate(n);
-                my_uninitialized_fill_n(_container, n, val);
+                for (size_type i = 0; i < n; i++)
+                    _alloc.construct(_container + i, val);
             }
-            template <class InputIterator>
-            vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc(alloc)
-            {
-                _containerCapacity = _containerSize = (last - first);
-                _container = _alloc.allocate(last - first);
-                my_uninitialized_copy(first, last, _container);
-            }
+            // template <class InputIterator>
+            // vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc(alloc)
+            // {
+            //     _containerCapacity = _containerSize = (last - first);
+            //     _container = _alloc.allocate(last - first);
+            //     for (size_type i = 0; first != last; i++, first++)
+            //         _alloc.construct(_container[i], *first);
+            // }
             vector (const vector& x)
             {
-                _containerCapacity = x.capacity();
-                _containerSize = x.size();
-                _alloc = x.get_allocator();
+                _containerCapacity = x._containerCapacity;
+                _containerSize = x._containerSize;
+                _alloc = x._alloc;
                 _container = _alloc.allocate(_containerCapacity);
-                // for (iterator it = x.begin(); it != x.end(); it++)
-                //     _alloc.construct();
+                for (size_type i = 0; i < _containerSize; i++)
+                    _alloc.construct(_container + i, x._container + i);
             }
             //destructor
             ~vector()
             {
-                // for (size_type it = 0; it < _containerSize; it++)
-                //     _alloc.destroy(_container[it]);
-                // _alloc.deallocate(_container, _containerCapacity);
+                if (!_container)
+                    return ;
+                for (size_type i = 0; i < _containerSize; i++)
+                    _alloc.destroy(_container + i);
+                _alloc.deallocate(_container, _containerCapacity);
             }
             // assignment operator
             vector& operator= (const vector& x)
             {
                 if (this == &x)
                     return *this;
-                if (_containerCapacity < x.size())
-                {
-                    for (iterator it = data(); it != end(); it++)
-                        _alloc.destroy(&it);
-                    _alloc.deallocate(_container, _containerCapacity);
-                    _containerCapacity = x.capacity();
-                    _container = _alloc.allocate(_containerCapacity);
-                }
-                _containerSize = x.size();
-                my_uninitialized_copy(x.begin(), x.end(), _container);
+                for (size_type i = 0; i < _containerSize ;i++)
+                    _alloc.destroy(_container + i);
+                _alloc.deallocate(_container, _containerCapacity);
+                _containerCapacity = x._containerCapacity;
+                _containerSize = x._containerSize;
+                _container = _alloc.allocate(_containerCapacity);
+                for (size_type i = 0; i < _containerSize; i++)
+                    _alloc.construct(_container[i], x._container[i]);
                 return *this;
             }
             template <class InputIterator>
@@ -216,50 +217,53 @@ namespace ft
                 if (n <= _containerCapacity)
                     return;
                 T* tempContainer = _alloc.allocate(n);
-                // for(iterator it = begin(); it != end(); ++it)
-                //     _alloc.construct(tempContainer[i], )
+                for (size_type i = 0; i < _containerSize; i++)
+                {
+                    _alloc.construct(tempContainer + i, _container + i);
+                    _alloc.destroy(_container + i);
+                }
                 _alloc.deallocate(_container, _containerCapacity);
                 _container = tempContainer;
                 _containerCapacity = n;
             }
-            void resize (size_type n, value_type val = value_type())
-            {
-                if (n <= _containerSize)
-                {
-                    for (iterator it = data(); it != end(); it++)
-                        _alloc.destroy(&it);
-                    _containerSize = n;
-                    return;
-                }
-                else
-                    reserve(n);
-            }
+            // void resize (size_type n, value_type val = value_type())
+            // {
+            //     if (n <= _containerSize)
+            //     {
+            //         for (iterator it = data(); it != end(); it++)
+            //             _alloc.destroy(&it);
+            //         _containerSize = n;
+            //         return;
+            //     }
+            //     else
+            //         reserve(n);
+            // }
 
         //-------------------------------------------------------------------------------------------------//
             //Modifiers member functions
             //insert
-            iterator insert (iterator position, const value_type& val)
-            {
-            }
-            void insert (iterator position, size_type n, const value_type& val)
-            {
-            }
-            template <class InputIterator>
-            void insert (iterator position, InputIterator first, InputIterator last)
-            {   
-            }
-            //erase
-            iterator erase(iterator position)
-            {
-            }
-            iterator erase(iterator first, iterator last)
-            {
-            }
+            // iterator insert (iterator position, const value_type& val)
+            // {
+            // }
+            // void insert (iterator position, size_type n, const value_type& val)
+            // {
+            // }
+            // template <class InputIterator>
+            // void insert (iterator position, InputIterator first, InputIterator last)
+            // {   
+            // }
+            // //erase
+            // iterator erase(iterator position)
+            // {
+            // }
+            // iterator erase(iterator first, iterator last)
+            // {
+            // }
             //clear
             void clear()
             {
-                for (iterator it = data(); it != end(); it++)
-                    _alloc.destroy(&it);
+                for (size_type i = 0; i < _containerSize; i++)
+                    _alloc.destroy(_container + i);
                 _containerSize = 0;
             }
     };

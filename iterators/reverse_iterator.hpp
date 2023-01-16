@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:52:09 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/15 17:20:19 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/16 10:25:48 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ namespace ft
                 reference operator*() const
                 {
                     Iterator tmp = current;
-                    return --tmp;
+                    return *--tmp;
                 }
                 pointer operator->() const
                 {
