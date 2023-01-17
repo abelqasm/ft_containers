@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/16 16:01:08 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/17 13:27:55 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "random_acces_iterator.hpp"
 #include "../iterators/reverse_iterator.hpp"
 #include "../enable_if.hpp"
+#include "../is_integral.hpp"
 
 namespace ft
 {
@@ -43,6 +44,20 @@ namespace ft
             T*          _container;
             size_type   _containerSize;
             size_type   _containerCapacity;
+            template< class BidirIt1, class BidirIt2 >
+            BidirIt2 copy_backward(BidirIt1 first, BidirIt1 last, BidirIt2 d_last)
+            {
+                while (first != last)
+                    *(--d_last) = *(--last);
+                return d_last;
+            }
+            template< class BidirIt1, class BidirIt2 >
+            BidirIt2 copy_forward(BidirIt1 first, BidirIt1 last, BidirIt2 d_first)
+            {
+                while (first != last)
+                    *(d_first++) = *(first++);
+                return d_first;
+            }
     public:
         //-------------------------------------------------------------------------------------------------//
             //constructors
@@ -58,14 +73,17 @@ namespace ft
                 for (size_type i = 0; i < n; i++)
                     _alloc.construct(_container + i, val);
             }
-            // template <class InputIterator>
-            // vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc(alloc)
-            // {
-            //     _containerCapacity = _containerSize = (last - first);
-            //     _container = _alloc.allocate(last - first);
-            //     for (size_type i = 0; first != last; i++, first++)
-            //         _alloc.construct(_container[i], *first);
-            // }
+            template <class InputIterator>
+            vector(InputIterator first, typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()) : _alloc(alloc)
+            {
+                size_type n = 0;
+                for (InputIterator it = first; it != last; it++, n++);
+                _containerCapacity = _containerSize = n;
+                _container = _alloc.allocate(n);
+                n = 0;
+                for (iterator it = first; it != last; n++, ++it)
+                    _alloc.construct(_container + n, *it);
+            }
             vector (const vector& x)
             {
                 _containerCapacity = x._containerCapacity;
@@ -219,7 +237,7 @@ namespace ft
                 T* tempContainer = _alloc.allocate(n);
                 for (size_type i = 0; i < _containerSize; i++)
                 {
-                    _alloc.construct(tempContainer + i, _container + i);
+                    _alloc.construct(tempContainer + i,  _container + i);
                     _alloc.destroy(_container + i);
                 }
                 _alloc.deallocate(_container, _containerCapacity);
@@ -242,23 +260,54 @@ namespace ft
         //-------------------------------------------------------------------------------------------------//
             //Modifiers member functions
             //insert
-            // iterator insert (iterator position, const value_type& val)
-            // {
-            // }
-            // void insert (iterator position, size_type n, const value_type& val)
-            // {
-            // }
-            // template <class InputIterator>
-            // void insert (iterator position, InputIterator first, InputIterator last)
-            // {   
-            // }
-            // //erase
-            // iterator erase(iterator position)
-            // {
-            // }
-            // iterator erase(iterator first, iterator last)
-            // {
-            // }
+            iterator insert (iterator position, const value_type& val)
+            {
+                if (_containerSize == _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                copy_backward(position, end(), end() + 1);
+                _alloc.construct(*position, val);
+                _containerSize++;
+                return position;
+            }
+            void insert (iterator position, size_type n, const value_type& val)
+            {
+                if (_containerSize + n > _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                copy_backward(position, end(), end() + n);
+                for (iterator it = position; n > 0; n--, ++it)
+                    _alloc.construct(*it, val);
+                _containerSize += n;
+            }
+            template <class InputIterator>
+            void insert (iterator position, InputIterator first, typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
+            {
+                size_type n = 0;
+                for (InputIterator it = first; it != last; it++, n++);
+                if (_containerSize + n > _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                copy_backward(position, end(), end() + n);
+                for (iterator it = position; first != last; ++it, ++first)
+                    _alloc.construct(&(*it), *first);
+                _containerSize += n;
+            }
+            //erase
+            iterator erase(iterator position)
+            {
+               _alloc.destroy(&(*position));
+               copy_forward(position + 1, end(), position);
+               _containerSize--;
+               return position;
+            }
+            iterator erase(iterator first, iterator last)
+            {
+                size_type newSize = _containerSize;
+                for (iterator it = first; it != last; ++it, newSize--)
+                    _alloc.destroy(&(*it));
+                if (last != end())
+                    copy_forward(last + 1, end(), first);
+                _containerSize = newSize;
+                return first;
+            }
             //clear
             void clear()
             {
