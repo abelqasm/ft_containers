@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/18 20:14:20 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/19 15:22:45 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,6 @@ namespace ft
                 while (first != last)
                     *(--d_last) = *(--last);
                 return d_last;
-            }
-            template< class BidirIt1, class BidirIt2 >
-            BidirIt2 my_copy_forward(BidirIt1 first, BidirIt1 last, BidirIt2 d_first)
-            {
-                while (first != last)
-                    *(d_first++) = *(first++);
-                return d_first;
             }
     public:
         //-------------------------------------------------------------------------------------------------//
@@ -115,12 +108,33 @@ namespace ft
                 _containerSize = x._containerSize;
                 _container = _alloc.allocate(_containerCapacity);
                 for (size_type i = 0; i < _containerSize; i++)
-                    _alloc.construct(_container[i], x._container[i]);
+                    _alloc.construct(_container + i, x._container + i);
                 return *this;
             }
             template <class InputIterator>
-            void assign(InputIterator first, InputIterator last);
-            void assign(size_type n, const T& u);
+            void assign(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
+            {
+                size_type n = 0;
+                for (InputIterator it = first; it != last; it++, n++);
+                for (size_type i = 0; i < _containerSize; i++)
+                    _alloc.destroy(_container + i);
+                if (n >= _containerCapacity)
+                    reserve(n);
+                n = 0;
+                for (InputIterator it = first; it != last; it++, n++)
+                    _alloc.construct(_container + n, *it);
+                _containerSize = n;
+            }
+            void assign(size_type n, const T& u)
+            {
+                for (size_type i = 0; i < _containerSize; i++)
+                    _alloc.destroy(_container + i);
+                if (n > _containerCapacity)
+                    reserve(n);
+                for (size_type i = 0; i < n; i++)
+                    _alloc.construct(_container + i, u);
+                _containerSize = n;
+            }
             allocator_type get_allocator() const
             {
                 return _alloc;
@@ -236,7 +250,12 @@ namespace ft
                 if (n <= _containerCapacity)
                     return;
                 T* tempContainer = _alloc.allocate(n);
-                my_copy_forward(_container, _container + _containerSize, tempContainer);
+                size_type i = 0;
+                for (iterator it = begin(); it != end(); it++ , i++)
+                {
+                    _alloc.construct(tempContainer + i , *it);
+                    _alloc.destroy(&(*it));
+                }
                 if (_container)
                     _alloc.deallocate(_container, _containerCapacity);
                 _container = tempContainer;
@@ -246,26 +265,41 @@ namespace ft
             // {
             //     if (n <= _containerSize)
             //     {
-            //         for (iterator it = data(); it != end(); it++)
-            //             _alloc.destroy(&it);
+            //         for (iterator it = begin(); it + n != end(); it++)
+            //             _alloc.destroy((&*it) + n);
             //         _containerSize = n;
             //         return;
             //     }
-            //     else
-            //         reserve(n);
             // }
 
         //-------------------------------------------------------------------------------------------------//
             //Modifiers member functions
+            //push_back
+            void push_back (const value_type& val)
+            {
+                if (!_container)
+                {
+                    _container = _alloc.allocate(1);
+                    _containerCapacity = 1;
+                }
+                else if (_containerSize == _containerCapacity)
+                    reserve(_containerCapacity * 2);
+                _alloc.construct(_container + _containerSize, val);
+                _containerSize++;
+            }
             //insert
             iterator insert (iterator position, const value_type& val)
             {
-                size_type pos = 0;
-                for (iterator it = begin(); it != position; it++, pos++);
                 if (_containerSize == _containerCapacity)
                     reserve(_containerCapacity * 2);
-                my_copy_backward(_container + pos, end(), end() + 1);
-                _alloc.construct(_container + pos, val);
+                if (position == end())
+                {
+                    _alloc.construct(&(*position), val);
+                    _containerSize++;
+                    return position;
+                }
+                my_copy_backward(position, end() - 1, end());
+                _alloc.construct(&(*position), val);
                 _containerSize++;
                 return position;
             }
@@ -307,13 +341,20 @@ namespace ft
             }
             iterator erase(iterator first, iterator last)
             {
-                size_type n = 0;
-                iterator retIt = first;        
-                while (last != end() - 1 && n++)
-                    *first++ = *++last;
-                while (n--)
-                    _alloc.destroy(&(*last++)); 
-                return retIt;
+                iterator it = first;
+                if (first == last)
+                    return first;
+                if (last == end())
+                {
+                    while (it != last && _containerSize--)
+                        _alloc.destroy(&(*it++));
+                    return first;
+                }
+                while (last != end())
+                    *it++ = *last++;
+                while (it != last && _containerSize--)
+                    _alloc.destroy(&(*it++));
+                return first;
             }
             //clear
             void clear()

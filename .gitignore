@@ -2,3 +2,5 @@
 .DS_Store
 a.out
 test.cpp
+test.dSYM
+test
