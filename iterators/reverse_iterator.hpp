@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:52:09 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/16 10:25:48 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/20 10:10:35 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,15 @@ namespace ft
             return x.base() <= y.base();
         }
         template <class Iterator>
-        typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+        typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y)
+        {
+            return y.base() - x.base();
+        }
         template <class Iterator>
-        reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& x);
+        reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& x)
+        {
+            return reverse_iterator<Iterator>(x.base() + n);
+        }
 }
 
 #endif

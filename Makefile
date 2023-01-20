@@ -5,7 +5,7 @@ LDFLAGS = -fsanitize=address -g3
 NAME = ./test
 
 all:
-	$(CC) $(CPPFLAGS) $(LDFLAGS) $(SRCS) -o $(NAME)
+	$(CC) -g $(CPPFLAGS) $(LDFLAGS) $(SRCS) -o $(NAME)
 
 run:
 	$(NAME)

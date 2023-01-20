@@ -6,12 +6,14 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:11:26 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/17 09:22:18 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/20 10:08:34 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RANDOM_ACCESS_ITERATOR_HPP
 #define RANDOM_ACCESS_ITERATOR_HPP
+
+#include "../iterators/iterator_traits.hpp"
 
 #include "../iterators/iterator_traits.hpp"
 
@@ -82,9 +84,17 @@ namespace ft
             {
                 return random_acces_iterator(_ptr + n);
             }
+            difference_type operator+(const random_acces_iterator& y) const
+            {
+                return _ptr + y._ptr;
+            }
             random_acces_iterator operator-(difference_type n) const
             {
                 return random_acces_iterator(_ptr - n);
+            }
+            difference_type operator-(const random_acces_iterator& y) const
+            {
+                return _ptr -  y._ptr;
             }
             random_acces_iterator& operator+=(difference_type n)
             {
@@ -128,3 +138,4 @@ namespace ft
 }
 
 #endif
+

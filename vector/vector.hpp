@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/19 15:22:45 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/20 16:22:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ namespace ft
             BidirIt2 my_copy_backward(BidirIt1 first, BidirIt1 last, BidirIt2 d_last)
             {
                 while (first != last)
-                    *(--d_last) = *(--last);
+                    *(d_last--) = *(last--);
                 return d_last;
             }
     public:
@@ -118,8 +118,8 @@ namespace ft
                 for (InputIterator it = first; it != last; it++, n++);
                 for (size_type i = 0; i < _containerSize; i++)
                     _alloc.destroy(_container + i);
-                if (n >= _containerCapacity)
-                    reserve(n);
+                if (n > _containerCapacity)
+                    reserve(n * 2);
                 n = 0;
                 for (InputIterator it = first; it != last; it++, n++)
                     _alloc.construct(_container + n, *it);
@@ -130,7 +130,7 @@ namespace ft
                 for (size_type i = 0; i < _containerSize; i++)
                     _alloc.destroy(_container + i);
                 if (n > _containerCapacity)
-                    reserve(n);
+                    reserve(n * 2);
                 for (size_type i = 0; i < n; i++)
                     _alloc.construct(_container + i, u);
                 _containerSize = n;
@@ -261,16 +261,22 @@ namespace ft
                 _container = tempContainer;
                 _containerCapacity = n;
             }
-            // void resize (size_type n, value_type val = value_type())
-            // {
-            //     if (n <= _containerSize)
-            //     {
-            //         for (iterator it = begin(); it + n != end(); it++)
-            //             _alloc.destroy((&*it) + n);
-            //         _containerSize = n;
-            //         return;
-            //     }
-            // }
+            void resize (size_type n, value_type val = value_type())
+            {
+                if (n <= _containerSize)
+                {
+                    erase(begin() + n, end());
+                    return;
+                }
+                if (n > _containerCapacity)
+                {
+                    if (n > _containerSize)
+                        reserve(_containerCapacity + n);
+                    else
+                        reserve(_containerCapacity * 2);
+                }
+                insert(end(), n - _containerSize, val);
+            }
 
         //-------------------------------------------------------------------------------------------------//
             //Modifiers member functions
@@ -278,38 +284,69 @@ namespace ft
             void push_back (const value_type& val)
             {
                 if (!_container)
-                {
-                    _container = _alloc.allocate(1);
-                    _containerCapacity = 1;
-                }
+                    reserve(1);
                 else if (_containerSize == _containerCapacity)
                     reserve(_containerCapacity * 2);
                 _alloc.construct(_container + _containerSize, val);
                 _containerSize++;
             }
+            //pop_back
+            void pop_back()
+            {
+                if (_containerSize == 0)
+                    return;
+                _alloc.destroy(_container + _containerSize - 1);
+                _containerSize--;
+            }
             //insert
             iterator insert (iterator position, const value_type& val)
             {
-                if (_containerSize == _containerCapacity)
+                difference_type pos = position - begin();
+                if (_containerCapacity == 0)
+                    reserve(1);
+                else if (_containerSize == _containerCapacity)
                     reserve(_containerCapacity * 2);
+                position = begin() + pos;
                 if (position == end())
                 {
-                    _alloc.construct(&(*position), val);
-                    _containerSize++;
+                    push_back(val);
                     return position;
                 }
-                my_copy_backward(position, end() - 1, end());
+                for (iterator it = end(); it != position; it--)
+                {
+                    _alloc.construct(&(*it), *(it - 1));
+                    _alloc.destroy(&(*(it - 1)));
+                }
                 _alloc.construct(&(*position), val);
                 _containerSize++;
                 return position;
-            }
+            }  
             void insert (iterator position, size_type n, const value_type& val)
             {
-                size_type pos = 0;
-                for (iterator it = begin(); it != position; it++, pos++);
-                if (_containerSize + n >= _containerCapacity)
-                    reserve(_containerCapacity * 2);
-                my_copy_backward(_container + pos, _container + pos + n, end() + n);
+                if (n == 0)
+                    return;
+                difference_type pos = position - begin();
+                if (_containerCapacity == 0)
+                    reserve(1);
+                else if (_containerSize + n > _containerCapacity)
+                {
+                    if (n > _containerSize)
+                        reserve(_containerCapacity + n);
+                    else
+                        reserve(_containerCapacity * 2);
+                }
+                position = begin() + pos;
+                if (position == end())
+                {
+                    for (size_type i = 0; i < n; i++)
+                        push_back(val);
+                    return;
+                }
+                for (iterator it = end() + n - 1; it != position + n - 1; it--)
+                {
+                    _alloc.construct(&(*it), *(it - n));
+                    _alloc.destroy(&(*(it - n)));
+                }
                 for (size_type i = 0; i < n; i++)
                     _alloc.construct(_container + pos + i, val);
                 _containerSize += n;
@@ -317,13 +354,32 @@ namespace ft
             template <class InputIterator>
             void insert (iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
             {
+                if (first == last)
+                    return;
                 size_type n = 0;
-                size_type pos = 0;
-                for (iterator it = begin(); it != position; it++, pos++);
+                difference_type pos = position - begin();
                 for (InputIterator it = first; it != last; it++, n++);
-                if (_containerSize + n > _containerCapacity)
-                    reserve(_containerCapacity * 2);
-                my_copy_backward(_container + pos, _container + pos + n, end() + n);
+                if (_containerCapacity == 0)
+                    reserve(1);
+                else if (_containerSize + n > _containerCapacity)
+                {
+                    if (n > _containerSize)
+                        reserve(_containerCapacity + n);
+                    else
+                        reserve(_containerCapacity * 2);
+                }
+                position = begin() + pos;
+                if (position == end())
+                {
+                    for (size_type i = 0; i < n; ++first,++i)
+                        push_back(*first);
+                    return;
+                }
+                for (iterator it = end() + n - 1; it != position + n - 1; it--)
+                {
+                    _alloc.construct(&(*it), *(it - n));
+                    _alloc.destroy(&(*(it - n)));
+                }
                 for (InputIterator it = first; it != last; ++it, ++pos)
                     _alloc.construct(_container + pos, *it);
                 _containerSize += n;
