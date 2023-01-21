@@ -110,5 +110,8 @@ int main(int argc, char** argv) {
 		std::cout << *it;
 	}
 	std::cout << std::endl;
+
+	int array[5] = {2, 3, 4, 5, 6};
+	std::sort(array, array + 5);
 	return (0);
 }

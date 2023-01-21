@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:52:09 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/20 10:10:35 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/21 18:33:26 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ namespace ft
                 explicit reverse_iterator(Iterator x) : current(x)
                 {
                 }
-                template <class U> reverse_iterator(const reverse_iterator<U>& u) : current(u.base())
+                template <class U>
+                reverse_iterator(const reverse_iterator<U>& u) : current(u.base())
                 {
                 }
                 Iterator base() const

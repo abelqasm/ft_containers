@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:11:26 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/20 10:08:34 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/21 18:17:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,24 @@ namespace ft
             random_acces_iterator() : _ptr(NULL)
             {
             }
-            random_acces_iterator(pointer ptr) : _ptr(ptr)
+            random_acces_iterator(T ptr) : _ptr(ptr)
             {
             }
-            random_acces_iterator(const random_acces_iterator& src)
+            pointer get() const
             {
-                *this = src;
+                return _ptr;
+            }
+            template <class U>
+            random_acces_iterator(const random_acces_iterator<U>& src)
+            {
+                _ptr = const_cast<T>(src.get());
             }
             ~random_acces_iterator()
             {
             }
             random_acces_iterator& operator=(const random_acces_iterator& rhs)
             {
-                if (this != &rhs)
-                    _ptr = rhs._ptr;
+                _ptr = rhs._ptr;
                 return *this;
             }
 
@@ -55,7 +59,7 @@ namespace ft
             {
                 return *_ptr;
             }
-            pointer operator->() const
+            T operator->() const
             {
                 return _ptr;
             }
@@ -79,6 +83,10 @@ namespace ft
                 random_acces_iterator tmp(*this);
                 --_ptr;
                 return tmp;
+            }
+            reference operator[](difference_type n) const
+            {
+                return _ptr[n];
             }
             random_acces_iterator operator+(difference_type n) const
             {
@@ -106,10 +114,6 @@ namespace ft
                 _ptr -= n;
                 return *this;
             }
-            reference operator[](difference_type n) const
-            {
-                return _ptr[n];
-            }
             bool operator==(const random_acces_iterator& rhs) const
             { 
                 return _ptr == rhs._ptr;
@@ -135,6 +139,16 @@ namespace ft
                 return _ptr >= rhs._ptr;
             }
     };
+    template <class T>
+    typename random_acces_iterator<T>::difference_type operator-(const random_acces_iterator<T>& x, const random_acces_iterator<T>& y)
+    {
+        return y.get() - x.get();
+    }
+    template <class T>
+    random_acces_iterator<T> operator+(typename random_acces_iterator<T>::difference_type n, const random_acces_iterator<T>& it)
+    {
+        return it + n;
+    }
 }
 
 #endif
