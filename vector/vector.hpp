@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/27 12:33:37 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/27 18:59:38 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,39 +50,34 @@ namespace ft
         //-------------------------------------------------------------------------------------------------//
             //constructors
             //default----------------------------------------------------------------------------------------------------------------//
-            explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc)
+            explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc) , _container(NULL), _containerSize(0), _containerCapacity(0)
             {
-                _containerCapacity = _containerSize = 0;
-                _container = NULL;
             }
             //fill constructor------------------------------------------------------------------------------------------------------------------------------//
-            explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc(alloc)
+            explicit vector (size_type n, const value_type& val = value_type(),
+                        const allocator_type& alloc = allocator_type()) : _alloc(alloc), _containerSize(n), _containerCapacity(n)
             {
-                _containerCapacity = _containerSize = n;
                 _container = _alloc.allocate(n);
                 for (size_type i = 0; i < n; i++)
                     _alloc.construct(_container + i, val);
             }
             //range constructor------------------------------------------------------------------------------------------------------------------------------//
             template <class InputIterator>
-            vector(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()) : _alloc(alloc)
+            vector(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last,
+                        const allocator_type& alloc = allocator_type()) : _alloc(alloc) , _container(NULL), _containerSize(0), _containerCapacity(0)
             {
                 ft::vector<T> temp;
                 size_type n = 0;
                 for (InputIterator it = first; it != last; ++it, ++n)
                     temp.push_back(*it);
-                _containerCapacity = _containerSize = n;
                 _container = _alloc.allocate(n);
                 n = 0;
                 for (iterator it = temp.begin(); it != temp.end(); n++, ++it)
                     _alloc.construct(_container + n, *it);
             }
             //copy constructor------------------------------------------------------------------------------------------------------------------------------//  
-            vector (const vector& x)
+            vector (const vector& x) : _alloc(x._alloc), _containerSize(x._containerSize), _containerCapacity(x._containerCapacity)
             {
-                _containerCapacity = x._containerCapacity;
-                _containerSize = x._containerSize;
-                _alloc = x._alloc;
                 _container = _alloc.allocate(_containerCapacity);
                 for (size_type i = 0; i < _containerSize; i++)
                     _alloc.construct(_container + i, *(x._container + i));
