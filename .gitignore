@@ -1,6 +1,7 @@
 .vscode
 .DS_Store
 a.out
-test.cpp
-test.dSYM
-test
+testStack.dSYM
+testVector.dSYM
+testVector
+testStack

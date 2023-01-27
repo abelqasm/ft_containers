@@ -6,14 +6,13 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:11:26 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/21 18:17:40 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/24 11:30:09 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RANDOM_ACCESS_ITERATOR_HPP
 #define RANDOM_ACCESS_ITERATOR_HPP
 
-#include "../iterators/iterator_traits.hpp"
 
 #include "../iterators/iterator_traits.hpp"
 
@@ -34,7 +33,7 @@ namespace ft
             random_acces_iterator() : _ptr(NULL)
             {
             }
-            random_acces_iterator(T ptr) : _ptr(ptr)
+            random_acces_iterator(pointer ptr) : _ptr(ptr)
             {
             }
             pointer get() const
@@ -42,9 +41,8 @@ namespace ft
                 return _ptr;
             }
             template <class U>
-            random_acces_iterator(const random_acces_iterator<U>& src)
+            random_acces_iterator(const random_acces_iterator<U>& u) : _ptr(u.get())
             {
-                _ptr = const_cast<T>(src.get());
             }
             ~random_acces_iterator()
             {
@@ -54,7 +52,6 @@ namespace ft
                 _ptr = rhs._ptr;
                 return *this;
             }
-
             reference operator*() const
             {
                 return *_ptr;
@@ -139,16 +136,46 @@ namespace ft
                 return _ptr >= rhs._ptr;
             }
     };
-    template <class T>
-    typename random_acces_iterator<T>::difference_type operator-(const random_acces_iterator<T>& x, const random_acces_iterator<T>& y)
-    {
-        return y.get() - x.get();
-    }
-    template <class T>
-    random_acces_iterator<T> operator+(typename random_acces_iterator<T>::difference_type n, const random_acces_iterator<T>& it)
-    {
-        return it + n;
-    }
+        template <class T>
+        typename random_acces_iterator<T>::difference_type operator-(const random_acces_iterator<T>& x, const random_acces_iterator<T>& y)
+        {
+            return y.get() - x.get();
+        }
+        template <class T>
+        random_acces_iterator<T> operator+(typename random_acces_iterator<T>::difference_type n, const random_acces_iterator<T>& it)
+        {
+            return it + n;
+        }
+        template <class T, class T2> 
+        bool operator==(const random_acces_iterator<T> &lhs, const random_acces_iterator<T2> &rhs)
+        { 
+            return lhs.get() == rhs.get();
+        }
+        template <class T, class T2> 
+        bool operator!=(const random_acces_iterator<T> &lhs, const random_acces_iterator<T2> &rhs)
+        { 
+            return lhs.get() != rhs.get();
+        }
+        template <class T, class T2> 
+        bool operator<(const random_acces_iterator<T> &lhs, const random_acces_iterator<T2> &rhs)
+        { 
+            return lhs.get() < rhs.get();
+        }
+        template <class T, class T2> 
+        bool operator>(const random_acces_iterator<T> &lhs, const random_acces_iterator<T2> &rhs)
+        { 
+            return lhs.get() > rhs.get();
+        }
+        template <class T, class T2> 
+        bool operator>=(const random_acces_iterator<T> &lhs, const random_acces_iterator<T2> &rhs)
+        { 
+            return lhs.get() >= rhs.get();
+        }
+        template <class T, class T2> 
+        bool operator<=(const random_acces_iterator<T> &lhs, const random_acces_iterator<T2> &rhs)
+        { 
+            return lhs.get() <= rhs.get();
+        }
 }
 
 #endif

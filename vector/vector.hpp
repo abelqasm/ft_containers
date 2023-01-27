@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/21 18:44:14 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/27 12:33:37 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,19 +167,19 @@ namespace ft
             //revers iterators
             reverse_iterator       rbegin()
             {
-                return reverse_iterator(_container);
+                return reverse_iterator(_container + _containerSize);
             }
             const_reverse_iterator rbegin()  const
             {
-                return const_reverse_iterator(_container);
+                return const_reverse_iterator(_container + _containerSize);
             }
             reverse_iterator       rend()
             {
-                return reverse_iterator(_container + _containerSize);
+                return reverse_iterator(_container);
             }
             const_reverse_iterator rend()    const
             {
-                return reverse_iterator(_container + _containerSize);
+                return reverse_iterator(_container);
             }
 
         //-------------------------------------------------------------------------------------------------//
@@ -239,7 +239,7 @@ namespace ft
             }
             size_type max_size() const
             {
-                return _alloc.max_size();
+                return std::min<size_type>(_alloc.max_size(), std::numeric_limits<difference_type>::max());
             }
             size_type capacity() const
             {
@@ -288,7 +288,7 @@ namespace ft
             //push_back-------------------------------------------------------------------//
             void push_back (const value_type& val)
             {
-                if (!_container)
+                if (_containerCapacity == 0)
                     reserve(1);
                 else if (_containerSize == _containerCapacity)
                     reserve(_containerCapacity * 2);
@@ -399,6 +399,7 @@ namespace ft
                 T* tempContainer = _container;
                 size_type tempSize = _containerSize;
                 size_type tempCapacity = _containerCapacity;
+                
                 _container = x._container;
                 _containerSize = x._containerSize;
                 _containerCapacity = x._containerCapacity;
@@ -448,12 +449,7 @@ namespace ft
     template <class T, class Alloc> 
     bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
     {
-        if (lhs.size() != rhs.size())
-            return false;
-        for (size_t i = 0; i < lhs.size(); i++)
-            if (lhs[i] != rhs[i])
-                return false;
-        return true;
+        return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
     template <class T, class Alloc>  
     bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
@@ -473,40 +469,19 @@ namespace ft
         return false;
     }
     template <class T, class Alloc>  
-    bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
-    {
-        if (lhs.size() > rhs.size())
-            return false;
-        for (size_t i = 0; i < lhs.size(); i++)
-        {
-            if (i < rhs.size() && lhs[i] > rhs[i])
-                return false;
-        }
-        return true;
-    }
-    template <class T, class Alloc>  
     bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
     {
-        if (lhs.size() > rhs.size())
-            return true;
-        for (size_t i = 0; i < lhs.size(); i++)
-        {
-            if (lhs[i] > rhs[i])
-                return true;
-        }
-        return false;
+       return rhs < lhs;
+    }
+    template <class T, class Alloc>  
+    bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    {
+        return !(rhs < lhs);
     }
     template <class T, class Alloc>  
     bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
     {
-        if (lhs.size() < rhs.size())
-            return false;
-        for (size_t i = 0; i < lhs.size(); i++)
-        {
-            if (i < rhs.size() && lhs[i] < rhs[i])
-                return false;
-        }
-        return true;
+        return !(lhs < rhs);
     }
     template <class T, class Alloc> 
     void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
