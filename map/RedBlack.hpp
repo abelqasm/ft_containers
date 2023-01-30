@@ -1,21 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   testStack.cpp                                      :+:      :+:    :+:   */
+/*   RedBlack.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/23 17:56:42 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/29 18:43:47 by abelqasm         ###   ########.fr       */
+/*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
+/*   Updated: 2023/01/30 15:54:33 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <stack>
-#include "stack/stack.hpp"
+#ifndef REDBLACK_HPP
+#define REDBLACK_HPP
 
-int main()
+template <class T>
+struct  node
 {
-    ft::stack<int> mystack;
-    mystack.push(10);
+    T         _value;
+    node      *_left;
+    node      *_right;
+    node      *_parent;
+    bool      _color;
+};
+
+namespace ft
+{
+    template <class T>
+    void RedBlackInsertion(node<T> *root, node<T> *new_node)
+    {
+    }
+    template <class T>
+    void RedBlackInsertionFixup(node<T> *root, node<T> *new_node)
+    {
+    }
 }
+
+#endif

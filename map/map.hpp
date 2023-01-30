@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/27 19:58:58 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/29 16:22:45 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "../ft/enable_if.hpp"
 #include "../iterators/reverse_iterator.hpp"
 #include "bidirectional_iterator.hpp"
+#include "RedBlack.hpp"
 #include <memory>
 #include <functional>
 
@@ -46,19 +47,12 @@ namespace ft
         typedef ft::reverse_iterator<iterator>              reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
     private:
-            typedef struct  s_node
-            {
-                value_type  value;
-                s_node      *left;
-                s_node      *right;
-                s_node      *parent;
-            }               t_node;
 
             allocator_type  _alloc;
             key_compare     _comp;
             size_type       _size;
-            t_node          _*root;
-            t_node          _*end;
+            node            *_root;
+            node            *_end;
     public:
         //------------------------------------------------------------------------------------------------------------------------------------
             //constructors
@@ -83,6 +77,9 @@ namespace ft
             reverse_iterator rend();
             reverse_iterator rend() const;
         //------------------------------------------------------------------------------------------------------------------------------------
+            // Element access member functions
+            mapped_type& operator[](const key_type& k);
+        //------------------------------------------------------------------------------------------------------------------------------------
             // Capacity member functions
             bool empty() const
             {
@@ -94,8 +91,34 @@ namespace ft
             }
             size_type max_size() const
             {
-                return std::min<size_type>(_alloc.max_size(), num);
+                return std::min<size_type>(_alloc.max_size(), std::numeric_limits<difference_type>::max());
             }
+        //------------------------------------------------------------------------------------------------------------------------------------
+            // Observers member functions
+            key_compare key_comp() const;
+            value_compare value_comp() const;
+        //------------------------------------------------------------------------------------------------------------------------------------
+            // Operations member functions
+            iterator find(const key_type& k);
+            const_iterator find(const key_type& k) const;
+            size_type count(const key_type& k) const;
+            iterator lower_bound(const key_type& k);
+            const_iterator lower_bound(const key_type& k) const;
+            iterator upper_bound(const key_type& k);
+            const_iterator upper_bound(const key_type& k) const;
+            ft::pair<iterator,iterator> equal_range(const key_type& k);
+            ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
+        //------------------------------------------------------------------------------------------------------------------------------------
+            // Modifiers member functions
+            ft::pair<iterator, bool> insert(const value_type& val);
+            iterator insert(iterator position, const value_type& val);
+            template <class InputIterator>
+            void insert(InputIterator first, InputIterator last);
+            void erase(iterator position);
+            size_type erase(const key_type& k);
+            void erase(iterator first, iterator last);
+            void swap(map& x);
+            void clear();
     };
 }
 

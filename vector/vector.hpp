@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/27 18:59:38 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/01/30 17:11:24 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ namespace ft
                 for (size_type i = 0; i < _containerSize; i++)
                     _alloc.destroy(_container + i);
                 if (n > _containerCapacity)
-                    reserve(n * 2);
+                    reserve(n);
                 n = 0;
                 for (iterator it = temp.begin(); it != temp.end(); n++, ++it)
                     _alloc.construct(_container + n, *it);
@@ -130,7 +130,7 @@ namespace ft
                 for (size_type i = 0; i < _containerSize; i++)
                     _alloc.destroy(_container + i);
                 if (n > _containerCapacity)
-                    reserve(n * 2);
+                    reserve(n);
                 for (size_type i = 0; i < n; i++)
                     _alloc.construct(_container + i, u);
                 _containerSize = n;
