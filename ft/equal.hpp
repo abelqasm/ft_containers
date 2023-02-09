@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 11:02:11 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/26 12:50:56 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:44:41 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace ft
     {
         while (first1 != last1)
         {
-            if (!(*first1 == *first2))
+            if (*first1 != *first2)
                 return (false);
             ++first1;
             ++first2;

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/09 15:13:08 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:40:15 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "../ft/enable_if.hpp"
 #include "../ft/is_integral.hpp"
 #include "../ft/equal.hpp"
+#include "../ft/lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -444,14 +445,7 @@ namespace ft
     template <class T, class Alloc>  
     bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
     {
-        if (lhs.size() < rhs.size())
-            return true;
-        for (size_t i = 0; i < lhs.size(); i++)
-        {
-            if (i < rhs.size() && lhs[i] < rhs[i])
-                return true;
-        }
-        return false;
+        return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
     }
     template <class T, class Alloc>  
     bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
