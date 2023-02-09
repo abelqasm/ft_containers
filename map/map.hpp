@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/29 16:22:45 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/09 10:30:59 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,19 +47,17 @@ namespace ft
         typedef ft::reverse_iterator<iterator>              reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
     private:
-
             allocator_type  _alloc;
             key_compare     _comp;
-            size_type       _size;
-            node            *_root;
-            node            *_end;
+            size_type       _containerSize;
+            RedBlackTree    _container;
     public:
         //------------------------------------------------------------------------------------------------------------------------------------
             //constructors
             //default ------------------------------------------------------------------------------------------------------------------------------------
-            explicit map(const key_compare& comp = key_compare(),
-                        const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp), _size(0), _root(NULL), _end(NULL)
+            explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp)
             {
+                _containerSize = 0;
             }
             allocator_type get_allocator() const
             {
@@ -67,15 +65,39 @@ namespace ft
             }
         //-------------------------------------------------------------------------------------------------//    
             //iterators
-            iterator begin();
-            iterator begin() const;
-            iterator end();
-            iterator end() const;
+            iterator begin()
+            {
+                return iterator(_contaier.getRoot());
+            }
+            iterator begin() const
+            {
+                return iterator(_contaier.getRoot());
+            }
+            iterator end()
+            {
+                return iterator(_contaier.getEnd());
+            }
+            iterator end() const
+            {
+                return iterator(_contaier.getEnd());
+            }
             //reverse iterators
-            reverse_iterator rbegin();
-            reverse_iterator rbegin() const;
-            reverse_iterator rend();
-            reverse_iterator rend() const;
+            reverse_iterator rbegin()
+            {
+                return reverse_iterator(_contaier.getEnd());
+            }
+            reverse_iterator rbegin() const
+            {
+                return reverse_iterator(_contaier.getEnd());
+            }
+            reverse_iterator rend()
+            {
+                return reverse_iterator(_contaier.getRoot());
+            }
+            reverse_iterator rend() const
+            {
+                return reverse_iterator(_contaier.getRoot());
+            }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Element access member functions
             mapped_type& operator[](const key_type& k);
@@ -95,7 +117,10 @@ namespace ft
             }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Observers member functions
-            key_compare key_comp() const;
+            key_compare key_comp() const
+            {
+                return _comp;
+            }
             value_compare value_comp() const;
         //------------------------------------------------------------------------------------------------------------------------------------
             // Operations member functions

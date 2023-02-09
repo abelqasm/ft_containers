@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:11:26 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/24 11:30:09 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/07 17:14:09 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft
     private:
             pointer _ptr;
     public:
-            random_acces_iterator() : _ptr(NULL)
+            random_acces_iterator() : _ptr(nullptr)
             {
             }
             random_acces_iterator(pointer ptr) : _ptr(ptr)

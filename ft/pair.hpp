@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 12:13:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/25 11:40:41 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/09 11:40:02 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,20 @@ namespace ft
         }
     };
     template <class T1, class T2>
-    bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
+    bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
+    {
+        return lhs.first == rhs.first && lhs.second == rhs.second;
+    }
     template <class T1, class T2>
-    bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
+    bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
+    {
+        return !(lhs == rhs);
+    }
     template <class T1, class T2>
-    bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
+    bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
+    {
+        return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second);
+    }
     template <class T1, class T2>
     bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
     template <class T1, class T2>

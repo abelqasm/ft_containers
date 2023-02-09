@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/07 14:25:29 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:13:08 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,13 @@ namespace ft
             T*          _container;
             size_type   _containerSize;
             size_type   _containerCapacity;
+            void    reserveNewN(size_type n)
+            {
+                if (n > _containerSize)
+                    reserve(_containerCapacity + n);
+                else
+                    reserve(_containerCapacity * 2);
+            }
     public:
         //-------------------------------------------------------------------------------------------------//
             //constructors
@@ -53,7 +60,7 @@ namespace ft
             explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc)
             {
                 _containerCapacity = _containerSize = 0;
-                _container = NULL;
+                _container = nullptr;
             }
             //fill constructor------------------------------------------------------------------------------------------------------------------------------//
             explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc(alloc)
@@ -123,7 +130,7 @@ namespace ft
                 for (size_type i = 0; i < _containerSize; i++)
                     _alloc.destroy(_container + i);
                 if (n > _containerCapacity)
-                    reserve(n * 2);
+                    reserve(n);
                 n = 0;
                 for (iterator it = temp.begin(); it != temp.end(); n++, ++it)
                     _alloc.construct(_container + n, *it);
@@ -132,10 +139,10 @@ namespace ft
             // assign n element-------------------------------------------------------------------//
             void assign(size_type n, const T& u)
             {
-                for (size_type i = 0; i < _containerSize; i++)
-                    _alloc.destroy(_container + i);
+                while (_containerSize)
+                    _alloc.destroy(_container + --_containerSize);
                 if (n > _containerCapacity)
-                    reserve(n * 2);
+                    reserve(n);
                 for (size_type i = 0; i < n; i++)
                     _alloc.construct(_container + i, u);
                 _containerSize = n;
@@ -268,19 +275,13 @@ namespace ft
             }
             void resize (size_type n, value_type val = value_type())
             {
-                if (n <= _containerSize)
-                {
+                if (n < _containerSize)
                     erase(begin() + n, end());
-                    return;
-                }
-                if (n > _containerCapacity)
+                else if (n > _containerSize)
                 {
-                    if (n > _containerSize)
-                        reserve(_containerCapacity + n);
-                    else
-                        reserve(_containerCapacity * 2);
+                    reserve(n);       
+                    insert(end(), n - _containerSize, val);
                 }
-                insert(end(), n - _containerSize, val);
             }
 
         //-------------------------------------------------------------------------------------------------//
@@ -292,16 +293,14 @@ namespace ft
                     reserve(1);
                 else if (_containerSize == _containerCapacity)
                     reserve(_containerCapacity * 2);
-                _alloc.construct(_container + _containerSize, val);
-                _containerSize++;
+                _alloc.construct(_container + _containerSize++, val);
             }
             //pop_back-------------------------------------------------------------------//
             void pop_back()
             {
                 if (_containerSize == 0)
                     return;
-                _alloc.destroy(_container + _containerSize - 1);
-                _containerSize--;
+                _alloc.destroy(_container + _containerSize-- - 1);
             }
             //insert in one position-------------------------------------------------------------------//
             iterator insert (iterator position, const value_type& val)
@@ -332,15 +331,8 @@ namespace ft
                 if (n == 0)
                     return;
                 difference_type pos = position - begin();
-                if (_containerCapacity == 0)
-                    reserve(1);
-                else if (_containerSize + n > _containerCapacity)
-                {
-                    if (n > _containerSize)
-                        reserve(_containerCapacity + n);
-                    else
-                        reserve(_containerCapacity * 2);
-                }
+                if (_containerSize + n > _containerCapacity)
+                    reserveNewN(n);
                 position = begin() + pos;
                 if (position == end())
                 {
@@ -368,15 +360,8 @@ namespace ft
                 for (InputIterator it = first; it != last; ++it, ++n)
                     temp.push_back(*it);
                 difference_type pos = position - begin();
-                if (_containerCapacity == 0)
-                    reserve(1);
-                else if (_containerSize + n > _containerCapacity)
-                {
-                    if (n > _containerSize)
-                        reserve(_containerCapacity + n);
-                    else
-                        reserve(_containerCapacity * 2);
-                }
+                if (_containerSize + n > _containerCapacity)
+                    reserveNewN(n);
                 position = begin() + pos;
                 if (position == end())
                 {
