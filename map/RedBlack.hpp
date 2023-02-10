@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/07 18:00:31 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/10 18:34:39 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,65 +14,107 @@
 #define REDBLACK_HPP
 
 #include <memory>
+#include <iostream>
+#include <functional>
+#include "../ft/pair.hpp"
+#include "../ft/make_pair.hpp"
 
-template <class T>
-struct  node
+enum Color
 {
-    T         _value;
-    node      *_left;
-    node      *_right;
-    node      *_parent;
-    bool      _color;
+    RED,
+    BLACK
 };
 
-namespace ft
+template<class T>
+struct  node
 {
-    template <class T, class Allocator>
-    class RedBlackTree
+    typedef T              value_type;
+      
+    value_type          _value;
+    node                *_left;
+    node                * _right;
+    node                *_parent;
+    Color               _color;
+    
+    node(value_type value): _value(value), _left(), _right(), _parent(), _color(RED)
     {
-    public:
-        typedef T           value_type;
-        typedef Allocator   allocator_type;
-    private:
-        allocator_type  _alloc;
-        node<T>         *_root;
-        node<T>         *_end;
-        node<T>         *_nill;
-    public:
-        RedBlackTree(node<T> *root = nullptr, allocator_type &alloc = allocator_type()) : _alloc(alloc), _root(root), _nill(nullptr), _end(_root)
+    }
+    ~node()
+    {
+    }
+};
+
+template<class T, class Allocator = std::allocator<node<T> > >
+class RedBlackTree
+{
+public:
+    typedef T               value_type;
+    typedef Allocator       allocator_type;
+private:
+    allocator_type      _alloc;
+    node<T>             *_root;
+    node<T>             *_end;
+    node<T>             *_nill;
+public:
+    RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root(), _end(_root)
+    {
+        _nill = _alloc.allocate(1);
+        _alloc.construct(_nill, node<T>(value_type()));
+        _nill->_color = BLACK;
+    }
+    ~RedBlackTree()
+    {
+    }
+    void LeftRotate(node<T> *node)
+    {
+    }
+    void RightRotate(node<T> *node)
+    {
+    }
+    void Insert(value_type value)
+    {
+        if (!_root)
         {
+            _root = _alloc.allocate(1);
+            _alloc.construct(_root, node<T>(value));
+            _root->_color = BLACK;
+            _root->_left = _nill;
+            _root->_right = _nill;
+            _root->_parent = _nill;
+            return ;
         }
-        ~RedBlackTree()
+        node<T> *root = _root;
+        while (root != _nill)
         {
+            if (value < root->_value)
+                root = root->_left;
+            else
+                root = root->_right;
         }
-        void LeftRotate(node<T> *node)
-        {
-        }
-        void RightRotate(node<T> *node)
-        {
-        }
-        void Insertion(node<T> *node)
-        {
-        }
-        void InsertionFixup(node<T> *node)
-        {
-        }
-        void Deletion(node<T> *node)
-        {
-        }
-        node<T> *getRoot() const
-        {
-            return _root;
-        }
-        node<T> *getEnd() const
-        {
-            return _end;
-        }
-        node<T> *getNill() const
-        {
-            return _nill;
-        }
-    };
-}
+        node<T> *newNode = _alloc.allocate(1);
+        _alloc.construct(newNode, node<T>(value));
+        newNode->_left = _nill;
+        newNode->_right = _nill;
+        root->_left = newNode;
+    }
+    void InsertFixup(node<T> *node)
+    {
+    }
+    void Deletion(node<T> *node)
+    {
+    }
+    node<T> *getRoot() const
+    {
+        return _root;
+    }
+    node<T> *getEnd() const
+    {
+        return _end;
+    }
+    node<T> *getNill() const
+    {
+        return _nill;
+    }
+};
 
 #endif

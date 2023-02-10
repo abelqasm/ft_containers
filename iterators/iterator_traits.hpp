@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 12:46:44 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/23 12:21:05 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/10 14:41:09 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,7 @@ namespace std {
 
 }
 namespace ft
-{   
-    template<class Category, class T, class Distance = ptrdiff_t,  class Pointer = T*, class Reference = T&>
-    struct iterator
-    {
-        typedef T           value_type;
-        typedef Distance    difference_type;
-        typedef Pointer     pointer;
-        typedef Reference   reference;
-        typedef Category    iterator_category;
-    };
-    
+{ 
     template<class Iterator>
     struct iterator_traits
     {

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/09 10:30:59 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/10 16:02:51 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft
     public:
         typedef Key                                         key_type;
         typedef T                                           mapped_type;
-        typedef pair<const Key, T>                          value_type;
+        typedef ft::pair<const Key, T>                      value_type;
         typedef Compare                                     key_compare;
         typedef Allocator                                   allocator_type;
         

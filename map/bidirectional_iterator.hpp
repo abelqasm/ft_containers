@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 13:45:41 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/27 13:58:44 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/10 14:41:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ namespace ft
                 typedef typename iterator_traits<T>::value_type              value_type;
                 typedef typename iterator_traits<T>::pointer                 pointer;
                 typedef typename iterator_traits<T>::reference               reference;
-                typedef typename iterator_traits<T>::iterator_category       iterator_category;
+                typedef typename std::bidirectional_iterator_tag             iterator_category;
         private:
                 pointer _ptr;
         public:
