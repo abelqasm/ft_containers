@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/11 13:14:02 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/11 13:18:15 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,10 +283,8 @@ namespace ft
             //push_back-------------------------------------------------------------------//
             void push_back (const value_type& val)
             {
-                if (_containerCapacity == 0)
-                    reserve(1);
-                else if (_containerSize == _containerCapacity)
-                    reserve(_containerCapacity * 2);
+                if (_containerCapacity == 0 || _containerSize == _containerCapacity)
+                    _containerCapacity == 0 ? reserve(1) : reserve(_containerCapacity * 2);
                 _alloc.construct(_container + _containerSize++, val);
             }
             //pop_back-------------------------------------------------------------------//
