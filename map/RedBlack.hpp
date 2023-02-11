@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/11 12:28:28 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/11 15:26:17 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ struct  node
       
     value_type          _value;
     node                *_left;
-    node                * _right;
+    node                *_right;
     node                *_parent;
     Color               _color;
     
-    node(value_type value, node<T> *parent, node<T> *nill): _value(value), _left(nill), _right(nill), _parent(parent), _color(RED)
+    node(value_type value, node<T> *nill): _value(value), _left(nill), _right(nill), _parent(nill), _color(RED)
     {
     }
     ~node()
@@ -50,63 +50,98 @@ class RedBlackTree
 public:
     typedef T               value_type;
     typedef Allocator       allocator_type;
+    typedef node<value_type>         node_type;
 private:
-    allocator_type      _alloc;
-    node<T>             *_root;
-    node<T>             *_end;
-    node<T>             *_nill;
+    allocator_type        _alloc;
+    node_type             *_root;
+    node_type             *_end;
+    node_type             *_nill;
+    
+    void allocateNode(node_type **locatedNode, value_type value)
+    {
+        *locatedNode = _alloc.allocate(1);
+        _alloc.construct(*locatedNode, node_type(value, _nill));
+    }
 public:
     RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root(), _end(_root)
     {
         _nill = _alloc.allocate(1);
-        _alloc.construct(_nill, node<T>(value_type(), nullptr, nullptr));
+        _alloc.construct(_nill, node_type(value_type(), nullptr));
         _nill->_color = BLACK;
     }
     ~RedBlackTree()
     {
     }
-    void LeftRotate(node<T> *node)
+    void LeftRotate(node_type *node)
+    {
+        node_type *rightNode = node->_right;
+        node->_right = rightNode->_left;
+        rightNode->_left != _nill ? rightNode->_left->_parent = node : 0;
+        rightNode->_parent = node->_parent;
+        if (node->_parent == _nill)
+            _root = rightNode;
+        else if (node == node->_parent->_left)
+            node->_parent->_left = rightNode;
+        else
+            node->_parent->_right = rightNode;
+        rightNode->_left = node;
+        node->_parent = rightNode;
+    }
+    void RightRotate(node_type *node)
+    {
+        node_type *leftNode = node->_left;
+        node->_left = leftNode->_right;
+        leftNode->_right != _nill ? leftNode->_right->_parent = node : 0;
+        leftNode->_parent = node->_parent;
+        if (node->_parent == _nill)
+            _root = leftNode;
+        else if (node == node->_parent->_right)
+            node->_parent->_right = leftNode;
+        else
+            node->_parent->_left = leftNode;
+        leftNode->_right = node;
+        node->_parent = leftNode;
+    }
+    void RightLeftRotate(node_type *node)
     {
     }
-    void RightRotate(node<T> *node)
+    void LeftRightRotate(node_type *node)
     {
     }
     void Insert(value_type value)
     {
         if (!_root)
         {
-            _root = _alloc.allocate(1);
-            _alloc.construct(_root, node<T>(value, _nill, _nill));
+            allocateNode(&_root, value);
             _root->_color = BLACK;
             return ;
         }
-        node<T> *root = _root;
-        node<T> *parent = _nill;
+        node_type *root = _root;
+        node_type *parent = _nill;
         while (root != _nill)
         {
             parent = root;
             value < root->_value ? root = root->_left : root = root->_right;
             root->_parent = parent;
         }
-        root = _alloc.allocate(1);
-        _alloc.construct(root, node<T>(value, root->_parent, _nill));
+        allocateNode(&root, value);
         value < parent->_value ? parent->_left = root : parent->_right = root;
     }
-    void InsertFixup(node<T> *node)
+    void InsertFixup(node_type *node)
     {
     }
-    void Deletion(node<T> *node)
+    void Delet(node_type *node)
     {
     }
-    node<T> *getRoot() const
+    node_type *getRoot() const
     {
         return _root;
     }
-    node<T> *getEnd() const
+    node_type *getEnd() const
     {
         return _end;
     }
-    node<T> *getNill() const
+    node_type *getNill() const
     {
         return _nill;
     }
