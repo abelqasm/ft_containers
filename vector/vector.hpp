@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/09 15:40:15 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/11 13:14:02 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,6 @@ namespace ft
             T*          _container;
             size_type   _containerSize;
             size_type   _containerCapacity;
-            void    reserveNewN(size_type n)
-            {
-                if (n > _containerSize)
-                    reserve(_containerCapacity + n);
-                else
-                    reserve(_containerCapacity * 2);
-            }
     public:
         //-------------------------------------------------------------------------------------------------//
             //constructors
@@ -333,7 +326,7 @@ namespace ft
                     return;
                 difference_type pos = position - begin();
                 if (_containerSize + n > _containerCapacity)
-                    reserveNewN(n);
+                    n > _containerSize ? reserve(_containerCapacity + n) : reserve(_containerCapacity * 2);
                 position = begin() + pos;
                 if (position == end())
                 {
@@ -362,7 +355,7 @@ namespace ft
                     temp.push_back(*it);
                 difference_type pos = position - begin();
                 if (_containerSize + n > _containerCapacity)
-                    reserveNewN(n);
+                    n > _containerSize ? reserve(_containerCapacity + n) : reserve(_containerCapacity * 2);
                 position = begin() + pos;
                 if (position == end())
                 {

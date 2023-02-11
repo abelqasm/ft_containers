@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/10 18:34:39 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/11 12:28:28 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ struct  node
     node                *_parent;
     Color               _color;
     
-    node(value_type value): _value(value), _left(), _right(), _parent(), _color(RED)
+    node(value_type value, node<T> *parent, node<T> *nill): _value(value), _left(nill), _right(nill), _parent(parent), _color(RED)
     {
     }
     ~node()
@@ -59,7 +59,7 @@ public:
     RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root(), _end(_root)
     {
         _nill = _alloc.allocate(1);
-        _alloc.construct(_nill, node<T>(value_type()));
+        _alloc.construct(_nill, node<T>(value_type(), nullptr, nullptr));
         _nill->_color = BLACK;
     }
     ~RedBlackTree()
@@ -76,26 +76,21 @@ public:
         if (!_root)
         {
             _root = _alloc.allocate(1);
-            _alloc.construct(_root, node<T>(value));
+            _alloc.construct(_root, node<T>(value, _nill, _nill));
             _root->_color = BLACK;
-            _root->_left = _nill;
-            _root->_right = _nill;
-            _root->_parent = _nill;
             return ;
         }
         node<T> *root = _root;
+        node<T> *parent = _nill;
         while (root != _nill)
         {
-            if (value < root->_value)
-                root = root->_left;
-            else
-                root = root->_right;
+            parent = root;
+            value < root->_value ? root = root->_left : root = root->_right;
+            root->_parent = parent;
         }
-        node<T> *newNode = _alloc.allocate(1);
-        _alloc.construct(newNode, node<T>(value));
-        newNode->_left = _nill;
-        newNode->_right = _nill;
-        root->_left = newNode;
+        root = _alloc.allocate(1);
+        _alloc.construct(root, node<T>(value, root->_parent, _nill));
+        value < parent->_value ? parent->_left = root : parent->_right = root;
     }
     void InsertFixup(node<T> *node)
     {
