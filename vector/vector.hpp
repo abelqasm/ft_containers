@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/11 13:18:15 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/11 18:55:19 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -376,7 +376,7 @@ namespace ft
                 T* tempContainer = _container;
                 size_type tempSize = _containerSize;
                 size_type tempCapacity = _containerCapacity;
-                
+
                 _container = x._container;
                 _containerSize = x._containerSize;
                 _containerCapacity = x._containerCapacity;
