@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/12 14:06:16 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/12 16:15:08 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ enum Color
 {
     RED,
     BLACK
+};
+
+enum LeftRight
+{
+    LEFT,
+    RIGHT
 };
 
 template<class T>
@@ -56,22 +62,63 @@ private:
     node_type             *_root;
     node_type             *_end;
     node_type             *_nill;
-    
+
+//------------------------------------------------------------------------------------------------
+    // allocate node and construct it
     void allocateNode(node_type **locatedNode, value_type value)
     {
         *locatedNode = _alloc.allocate(1);
         _alloc.construct(*locatedNode, node_type(value, _nill));
     }
+    // deallocate node and destroy it
+    void deallocateNode(node_type *node)
+    {
+        _alloc.destroy(node);
+        _alloc.deallocate(node, 1);
+    }
+//------------------------------------------------------------------------------------------------
+    // fixing tree helpers
+    void uncleRed(node_type **node, node_type **uncle, node_type **grandParent)
+    {
+        (*node)->_parent->_color = BLACK;
+        (*uncle)->_color = BLACK;
+        (*grandParent)->_color = RED;
+        (*node) = (*grandParent); 
+    }
+    void uncleBlack(node_type **node, node_type **grandParent, LeftRight leftright)
+    {
+        if (((*node) == (*node)->_parent->_right && leftright == LEFT) || ((*node) == (*node)->_parent->_left && leftright == RIGHT))
+        {
+            (*node) = (*node)->_parent;
+            leftright == LEFT ? LeftRotate(*node) : RightRotate(*node);
+        }
+        (*node)->_parent->_color = BLACK;
+        (*grandParent)->_color = RED;
+        leftright == LEFT ? RightRotate(*grandParent) : LeftRotate(*grandParent);
+    }
+    // fix tree after insertion
+    void Parent(node_type **node, LeftRight leftright)
+    {
+        node_type *uncle;
+        node_type *grandParent = (*node)->_parent->_parent;
+        leftright == LEFT ? uncle = (*node)->_parent->_parent->_right : uncle = (*node)->_parent->_parent->_left;
+        uncle->_color == RED ? uncleRed(node, &uncle, &grandParent): uncleBlack(node, &grandParent, leftright);
+    }
 public:
+//------------------------------------------------------------------------------------------------
+    //constructors
     RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root(), _end(_root)
     {
         _nill = _alloc.allocate(1);
         _alloc.construct(_nill, node_type(value_type(), nullptr));
         _nill->_color = BLACK;
     }
+    //destructor
     ~RedBlackTree()
     {
     }
+//------------------------------------------------------------------------------------------------
+    // left and right rotate
     void LeftRotate(node_type *node)
     {
         node_type *rightNode = node->_right;
@@ -102,6 +149,8 @@ public:
         leftNode->_right = node;
         node->_parent = leftNode;
     }
+//------------------------------------------------------------------------------------------------
+    // insert and delete
     void Insert(value_type value)
     {
         if (!_root)
@@ -125,60 +174,14 @@ public:
     void InsertFixup(node_type *node)
     {
         while (node->_parent->_color == RED)
-        {
-            if (node->_parent == node->_parent->_parent->_left)
-            {
-                node_type *uncle = node->_parent->_parent->_right;
-                node_type *grandParent = node->_parent->_parent;
-                if (uncle->_color == RED)
-                {
-            std::cout << "while loop" << std::endl;
-                    node->_parent->_color = BLACK;
-                    uncle->_color = BLACK;
-                    grandParent->_color = RED;
-                    node = grandParent; 
-                }
-                else
-                {
-                    if (node == node->_parent->_right)
-                    {
-                        node = node->_parent;
-                        LeftRotate(node);
-                    }
-                    node->_parent->_color = BLACK;
-                    grandParent->_color = RED;
-                    RightRotate(grandParent); 
-                }
-            }
-            else
-            {
-                node_type *uncle = node->_parent->_parent->_left;
-                node_type *grandParent = node->_parent->_parent;
-                if (uncle->_color == RED)
-                {
-                    node->_parent->_color = BLACK;
-                    uncle->_color = BLACK;
-                    grandParent->_color = RED;
-                    node = grandParent;
-                }
-                else
-                {
-                    if (node == node->_parent->_left)
-                    {
-                        node = node->_parent;
-                        RightRotate(node);
-                    }
-                    node->_parent->_color = BLACK;
-                    grandParent->_color = RED;
-                    LeftRotate(grandParent);
-                }
-            }
-        }
+            node->_parent == node->_parent->_parent->_left ? Parent(&node, LEFT) : Parent(&node, RIGHT);
         _root->_color = BLACK;
     }
     void Delet(node_type *node)
     {
     }
+//------------------------------------------------------------------------------------------------
+    // getters functions
     node_type *getRoot() const
     {
         return _root;
