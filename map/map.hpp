@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/10 16:02:51 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/14 13:58:06 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,11 @@ namespace ft
             // Capacity member functions
             bool empty() const
             {
-                return _size == 0;
+                return _containerSize == 0;
             }
             size_type size() const
             {
-                return _size;
+                return _containerSize;
             }
             size_type max_size() const
             {
@@ -124,8 +124,14 @@ namespace ft
             value_compare value_comp() const;
         //------------------------------------------------------------------------------------------------------------------------------------
             // Operations member functions
-            iterator find(const key_type& k);
-            const_iterator find(const key_type& k) const;
+            iterator find(const key_type& k)
+            {
+                return iterator(_container.find(k));
+            }
+            const_iterator find(const key_type& k) const
+            {
+                return const_iterator(_container.find(k));
+            }
             size_type count(const key_type& k) const;
             iterator lower_bound(const key_type& k);
             const_iterator lower_bound(const key_type& k) const;

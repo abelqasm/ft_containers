@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/12 16:15:08 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/14 13:56:10 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,13 @@ private:
         _alloc.deallocate(node, 1);
     }
 //------------------------------------------------------------------------------------------------
-    // fixing tree helpers
+    // insert fixup helpers
     void uncleRed(node_type **node, node_type **uncle, node_type **grandParent)
     {
         (*node)->_parent->_color = BLACK;
         (*uncle)->_color = BLACK;
         (*grandParent)->_color = RED;
-        (*node) = (*grandParent); 
+        (*node) = (*grandParent);
     }
     void uncleBlack(node_type **node, node_type **grandParent, LeftRight leftright)
     {
@@ -96,13 +96,59 @@ private:
         (*grandParent)->_color = RED;
         leftright == LEFT ? RightRotate(*grandParent) : LeftRotate(*grandParent);
     }
-    // fix tree after insertion
     void Parent(node_type **node, LeftRight leftright)
     {
         node_type *uncle;
         node_type *grandParent = (*node)->_parent->_parent;
         leftright == LEFT ? uncle = (*node)->_parent->_parent->_right : uncle = (*node)->_parent->_parent->_left;
-        uncle->_color == RED ? uncleRed(node, &uncle, &grandParent): uncleBlack(node, &grandParent, leftright);
+        uncle->_color == RED ? uncleRed(node, &uncle, &grandParent): uncleBlack(node, &grandParent, leftright); 
+    }
+//------------------------------------------------------------------------------------------------
+    // delete helpers
+    void transplant(node_type *node, node_type *transplanteNode)
+    {
+        node->_parent == _nill ? _root = transplanteNode :
+                    (node == node->_parent->_left ? node->_parent->_left = transplanteNode : node->_parent->_right = transplanteNode);
+        transplanteNode->_parent = node->_parent;
+    }
+    node_type *hasOneChild(node_type *node)
+    {
+        node->_left == _nill ? transplant(node, node->_right) : transplant(node, node->_left);
+        return node->_left == _nill ? node->_right : node->_left;
+    }
+    node_type *hasTwoChild(node_type *node, Color *yOriginalColor)
+    {
+        node_type *y = minimum(node->_right);
+        node_type *x;
+        y = minimum(node->_right);
+        *yOriginalColor = y->_color;
+        x = y->_right;
+        if (y != node->_right)
+        {
+            transplant(y, y->_right);
+            y->_right = node->_right;
+            y->_right->_parent = y;
+        }
+        else
+            x->_parent = y;
+        transplant(node, y);
+        y->_left = node->_left;
+        y->_left->_parent = y;
+        y->_color = node->_color;
+        return x;
+    }
+//------------------------------------------------------------------------------------------------
+    node_type *minimum(node_type *node)
+    {
+        while (node->_left != _nill)
+            node = node->_left;
+        return node;
+    }
+    node_type *maximum(node_type *node)
+    {
+        while (node->_right != _nill)
+            node = node->_right;
+        return node;
     }
 public:
 //------------------------------------------------------------------------------------------------
@@ -125,12 +171,8 @@ public:
         node->_right = rightNode->_left;
         rightNode->_left != _nill ? rightNode->_left->_parent = node : 0;
         rightNode->_parent = node->_parent;
-        if (node->_parent == _nill)
-            _root = rightNode;
-        else if (node == node->_parent->_left)
-            node->_parent->_left = rightNode;
-        else
-            node->_parent->_right = rightNode;
+        node->_parent == _nill ? _root = rightNode :
+                    (node == node->_parent->_left ? node->_parent->_left = rightNode : node->_parent->_right = rightNode);
         rightNode->_left = node;
         node->_parent = rightNode;
     }
@@ -140,24 +182,20 @@ public:
         node->_left = leftNode->_right;
         leftNode->_right != _nill ? leftNode->_right->_parent = node : 0;
         leftNode->_parent = node->_parent;
-        if (node->_parent == _nill)
-            _root = leftNode;
-        else if (node == node->_parent->_right)
-            node->_parent->_right = leftNode;
-        else
-            node->_parent->_left = leftNode;
+        node->_parent == _nill ? _root = leftNode :
+                    (node == node->_parent->_right ? node->_parent->_right = leftNode : node->_parent->_left = leftNode);
         leftNode->_right = node;
         node->_parent = leftNode;
     }
 //------------------------------------------------------------------------------------------------
-    // insert and delete
+    // insert
     void Insert(value_type value)
     {
         if (!_root)
         {
             allocateNode(&_root, value);
             _root->_color = BLACK;
-            return ;
+            return;
         }
         node_type *root = _root;
         node_type *parent = _nill;
@@ -177,8 +215,26 @@ public:
             node->_parent == node->_parent->_parent->_left ? Parent(&node, LEFT) : Parent(&node, RIGHT);
         _root->_color = BLACK;
     }
-    void Delet(node_type *node)
+    // delete
+    void Delete(node_type *node)
     {
+        node_type   *x;
+        Color       yOriginalColor = node->_color;
+        node->_left == _nill || node->_right == _nill ? x = hasOneChild(node) : x = hasTwoChild(node, &yOriginalColor);
+        // if (yOriginalColor == BLACK)
+        //     DeleteFixup(x);
+    }
+    void DeleteFixup(node_type *node);
+    node_type *find(value_type value)
+    {
+        node_type *root = _root;
+        while (root != _nill)
+        {
+            if (root->_value == value)
+                return root;
+            value < root->_value ? root = root->_left : root = root->_right;
+        }
+        return _nill;
     }
 //------------------------------------------------------------------------------------------------
     // getters functions
