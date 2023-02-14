@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/14 13:56:10 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/14 16:53:50 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,11 @@ private:
         if (((*node) == (*node)->_parent->_right && leftright == LEFT) || ((*node) == (*node)->_parent->_left && leftright == RIGHT))
         {
             (*node) = (*node)->_parent;
-            leftright == LEFT ? LeftRotate(*node) : RightRotate(*node);
+            leftright == LEFT ? leftRotate(*node) : rightRotate(*node);
         }
         (*node)->_parent->_color = BLACK;
         (*grandParent)->_color = RED;
-        leftright == LEFT ? RightRotate(*grandParent) : LeftRotate(*grandParent);
+        leftright == LEFT ? rightRotate(*grandParent) : leftRotate(*grandParent);
     }
     void Parent(node_type **node, LeftRight leftright)
     {
@@ -108,7 +108,7 @@ private:
     void transplant(node_type *node, node_type *transplanteNode)
     {
         node->_parent == _nill ? _root = transplanteNode :
-                    (node == node->_parent->_left ? node->_parent->_left = transplanteNode : node->_parent->_right = transplanteNode);
+                    node == node->_parent->_left ? node->_parent->_left = transplanteNode : node->_parent->_right = transplanteNode;
         transplanteNode->_parent = node->_parent;
     }
     node_type *hasOneChild(node_type *node)
@@ -136,6 +136,43 @@ private:
         y->_left->_parent = y;
         y->_color = node->_color;
         return x;
+    }
+    // delete fixup helpers
+    void siblingRed(node_type **node, node_type **sibling, LeftRight leftright)
+    {
+        (*sibling)->_color = BLACK;
+        (*node)->_parent->_color = RED;
+        leftright == RIGHT ? leftRotate((*node)->_parent) : rightRotate((*node)->_parent);
+        leftright == RIGHT ? *sibling = (*node)->_parent->_right : *sibling = (*node)->_parent->_left;
+    }
+    void noRedChild(node_type **node, node_type **sibling)
+    {
+        (*sibling)->_color = RED;
+        (*node) = (*node)->_parent;
+    }
+    void redChild(node_type **node, node_type **sibling, LeftRight leftright)
+    {
+        node_type *secondChild;
+        leftright == RIGHT ? secondChild = (*sibling)->_left : secondChild = (*sibling)->_right;
+        if (secondChild->_color == RED)
+        {
+            secondChild->_color = BLACK;
+            (*sibling)->_color = RED;
+            leftright == RIGHT ? rightRotate(*sibling) : leftRotate(*sibling);
+            leftright == RIGHT ? *sibling = (*node)->_parent->_right : *sibling = (*node)->_parent->_left;
+        }
+        (*sibling)->_color = (*node)->_parent->_color;
+        (*node)->_parent->_color = BLACK;
+        leftright == RIGHT ? (*sibling)->_right->_color = BLACK : (*sibling)->_left->_color = BLACK;
+        leftright == RIGHT ? leftRotate((*node)->_parent) : rightRotate((*node)->_parent);
+        (*node) = _root;
+    }
+    void Sibling(node_type **node, LeftRight leftright)
+    {
+        node_type *sibling;
+        leftright == RIGHT ? sibling = (*node)->_parent->_right : sibling = (*node)->_parent->_left;
+        sibling->_color == RED ? siblingRed(node, &sibling, leftright) : void();
+        sibling->_left->_color == BLACK && sibling->_right->_color == BLACK ? noRedChild(node, &sibling) : redChild(node, &sibling, leftright);
     }
 //------------------------------------------------------------------------------------------------
     node_type *minimum(node_type *node)
@@ -165,31 +202,31 @@ public:
     }
 //------------------------------------------------------------------------------------------------
     // left and right rotate
-    void LeftRotate(node_type *node)
+    void leftRotate(node_type *node)
     {
         node_type *rightNode = node->_right;
         node->_right = rightNode->_left;
         rightNode->_left != _nill ? rightNode->_left->_parent = node : 0;
         rightNode->_parent = node->_parent;
         node->_parent == _nill ? _root = rightNode :
-                    (node == node->_parent->_left ? node->_parent->_left = rightNode : node->_parent->_right = rightNode);
+                    node == node->_parent->_left ? node->_parent->_left = rightNode : node->_parent->_right = rightNode;
         rightNode->_left = node;
         node->_parent = rightNode;
     }
-    void RightRotate(node_type *node)
+    void rightRotate(node_type *node)
     {
         node_type *leftNode = node->_left;
         node->_left = leftNode->_right;
         leftNode->_right != _nill ? leftNode->_right->_parent = node : 0;
         leftNode->_parent = node->_parent;
         node->_parent == _nill ? _root = leftNode :
-                    (node == node->_parent->_right ? node->_parent->_right = leftNode : node->_parent->_left = leftNode);
+                    node == node->_parent->_right ? node->_parent->_right = leftNode : node->_parent->_left = leftNode;
         leftNode->_right = node;
         node->_parent = leftNode;
     }
 //------------------------------------------------------------------------------------------------
     // insert
-    void Insert(value_type value)
+    void insert(value_type value)
     {
         if (!_root)
         {
@@ -207,24 +244,29 @@ public:
         allocateNode(&root, value);
         root->_parent = parent;
         value < parent->_value ? parent->_left = root : parent->_right = root;
-        InsertFixup(root);
+        insertFixup(root);
     }
-    void InsertFixup(node_type *node)
+    void insertFixup(node_type *node)
     {
         while (node->_parent->_color == RED)
             node->_parent == node->_parent->_parent->_left ? Parent(&node, LEFT) : Parent(&node, RIGHT);
         _root->_color = BLACK;
     }
     // delete
-    void Delete(node_type *node)
+    void deleteNode(node_type *node)
     {
         node_type   *x;
         Color       yOriginalColor = node->_color;
         node->_left == _nill || node->_right == _nill ? x = hasOneChild(node) : x = hasTwoChild(node, &yOriginalColor);
-        // if (yOriginalColor == BLACK)
-        //     DeleteFixup(x);
+        if (yOriginalColor == BLACK)
+            deleteFixup(x);
     }
-    void DeleteFixup(node_type *node);
+    void deleteFixup(node_type *node)
+    {
+        while (node != _root && node->_color == BLACK)
+            node == node->_parent->_left ? Sibling(&node, RIGHT) : Sibling(&node, LEFT);
+        node->_color = BLACK;
+    }
     node_type *find(value_type value)
     {
         node_type *root = _root;
@@ -251,5 +293,4 @@ public:
         return _nill;
     }
 };
-
 #endif
