@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RedBlack.hpp                                       :+:      :+:    :+:   */
+/*   RedBlackTree.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/14 16:53:50 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 14:20:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <functional>
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
+#include "RedBlackTreeIterator.hpp"
 
 enum Color
 {
@@ -54,13 +55,25 @@ template<class T, class Allocator = std::allocator<node<T> > >
 class RedBlackTree
 {
 public:
-    typedef T                       value_type;
-    typedef Allocator               allocator_type;
-    typedef node<value_type>        node_type;
+    typedef T                                           value_type;
+    typedef Allocator                                   allocator_type;
+    typedef node<value_type>                            node_type;
+    typedef typename allocator_type::size_type          size_type;
+    typedef typename allocator_type::reference          reference;
+    typedef typename allocator_type::const_reference    const_reference;
+    typedef typename allocator_type::pointer            pointer;
+    typedef typename allocator_type::const_pointer      const_pointer;
+    typedef typename allocator_type::difference_type    difference_type;
+
+    typedef ft::RedBlackTreeIterator<value_type>        iterator;
+    typedef ft::RedBlackTreeIterator<const value_type>  const_iterator;
+    typedef ft::reverse_iterator<iterator>              reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
 private:
     allocator_type        _alloc;
     node_type             *_root;
     node_type             *_end;
+    node_type             *_begin;
     node_type             *_nill;
 
 //------------------------------------------------------------------------------------------------
@@ -196,6 +209,17 @@ public:
         _alloc.construct(_nill, node_type(value_type(), nullptr));
         _nill->_color = BLACK;
     }
+    // RedBlackTree(const RedBlackTree &t)
+    // {
+    //     *this = t;
+    // }
+    // RedBlackTree &operator=(const RedBlackTree &t)
+    // {
+    //     if (this == &t)
+    //         return ;
+    //     clear();
+    //     return *this;
+    // }
     //destructor
     ~RedBlackTree()
     {
@@ -232,6 +256,7 @@ public:
         {
             allocateNode(&_root, value);
             _root->_color = BLACK;
+            _begin = _end = _root;
             return;
         }
         node_type *root = _root;
@@ -244,6 +269,8 @@ public:
         allocateNode(&root, value);
         root->_parent = parent;
         value < parent->_value ? parent->_left = root : parent->_right = root;
+        value < _begin->_value ? _begin = root : 0;
+        value > _end->_value ? _end = root : 0;
         insertFixup(root);
     }
     void insertFixup(node_type *node)
@@ -279,6 +306,41 @@ public:
         return _nill;
     }
 //------------------------------------------------------------------------------------------------
+    // traversal
+    void inOrderTraversal()
+    {
+        node_type *root = _root;
+        bool flag = false;
+        while (root)
+        {
+            if (!flag)
+                root = minimum(root);
+            std::cout << root->_value << " ";
+            flag = true;
+            if (root->_right != _nill)
+            {
+                root = root->_right;
+                flag = false;
+            }
+            else if (root->_parent != _nill)
+            {
+                while (root->_parent != _nill && root == root->_parent->_right)
+                    root = root->_parent;
+                if (root->_parent == _nill)
+                    break;
+                root = root->_parent;
+            }
+            else 
+                break;
+        }
+    }
+//------------------------------------------------------------------------------------------------
+    // clear
+    void clear()
+    {
+        _root = _end = _nill;
+    }
+//------------------------------------------------------------------------------------------------
     // getters functions
     node_type *getRoot() const
     {
@@ -291,6 +353,40 @@ public:
     node_type *getNill() const
     {
         return _nill;
+    }
+//------------------------------------------------------------------------------------------------
+    // iterators
+    iterator begin()
+    {
+        return iterator(_begin);
+    }
+    iterator end()
+    {
+        return iterator(_end);
+    }
+    reverse_iterator rbegin()
+    {
+        return reverse_iterator(_end);
+    }
+    reverse_iterator rend()
+    {
+        return reverse_iterator(_begin);
+    }
+    const_iterator begin() const
+    {
+        return const_iterator(_begin);
+    }
+    const_iterator end() const
+    {
+        return const_iterator(_end);
+    }
+    const_reverse_iterator rbegin() const
+    {
+        return const_reverse_iterator(_end);
+    }
+    const_reverse_iterator rend() const
+    {
+        return const_reverse_iterator(_begin);
     }
 };
 #endif

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/14 13:58:06 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 13:39:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,10 @@
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
 #include "../ft/enable_if.hpp"
+#include "../ft/is_integral.hpp"
 #include "../iterators/reverse_iterator.hpp"
 #include "bidirectional_iterator.hpp"
-#include "RedBlack.hpp"
+#include "RedBlackTree.hpp"
 #include <memory>
 #include <functional>
 
@@ -58,7 +59,30 @@ namespace ft
             explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp)
             {
                 _containerSize = 0;
+                _container = RedBlackTree();
             }
+            template <class InputIterator> 
+            map (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last,
+                    const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+            {
+                _alloc = alloc;
+                _comp = comp;
+                _containerSize = 0;
+                _container = RedBlackTree();
+                insert(first, last);
+            }
+            map (const map& x)
+            {
+                _alloc = x._alloc;
+                _comp = x._comp;
+                _containerSize = x._containerSize;
+                _container = x._container;
+            }
+            ~map()
+            {
+                clear();
+            }
+        //------------------------------------------------------------------------------------------------------------------------------------
             allocator_type get_allocator() const
             {
                 return _alloc;
@@ -149,7 +173,11 @@ namespace ft
             size_type erase(const key_type& k);
             void erase(iterator first, iterator last);
             void swap(map& x);
-            void clear();
+            void clear()
+            {
+                _container.clear();
+                _containerSize = 0;
+            }
     };
 }
 
