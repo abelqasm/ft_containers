@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 14:20:40 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 16:25:19 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,10 @@
 #include "../ft/make_pair.hpp"
 #include "RedBlackTreeIterator.hpp"
 
-enum Color
-{
-    RED,
-    BLACK
-};
-
 enum LeftRight
 {
     LEFT,
     RIGHT
-};
-
-template<class T>
-struct  node
-{
-    typedef T              value_type;
-      
-    value_type          _value;
-    node                *_left;
-    node                *_right;
-    node                *_parent;
-    Color               _color;
-    
-    node(value_type value, node<T> *nill): _value(value), _left(nill), _right(nill), _parent(nill), _color(RED)
-    {
-    }
-    ~node()
-    {
-    }
 };
 
 template<class T, class Allocator = std::allocator<node<T> > >
@@ -57,18 +32,19 @@ class RedBlackTree
 public:
     typedef T                                           value_type;
     typedef Allocator                                   allocator_type;
-    typedef node<value_type>                            node_type;
     typedef typename allocator_type::size_type          size_type;
     typedef typename allocator_type::reference          reference;
     typedef typename allocator_type::const_reference    const_reference;
     typedef typename allocator_type::pointer            pointer;
     typedef typename allocator_type::const_pointer      const_pointer;
     typedef typename allocator_type::difference_type    difference_type;
+    typedef node<value_type>                            node_type;
+    typedef node<const value_type>                      const_node_type;
 
-    typedef ft::RedBlackTreeIterator<value_type>        iterator;
-    typedef ft::RedBlackTreeIterator<const value_type>  const_iterator;
-    typedef ft::reverse_iterator<iterator>              reverse_iterator;
-    typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
+    typedef RedBlackTreeIterator<value_type>                iterator;
+    typedef RedBlackTreeIterator<value_type>                const_iterator;
+    typedef ft::reverse_iterator<iterator>                  reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
 private:
     allocator_type        _alloc;
     node_type             *_root;
@@ -364,14 +340,6 @@ public:
     {
         return iterator(_end);
     }
-    reverse_iterator rbegin()
-    {
-        return reverse_iterator(_end);
-    }
-    reverse_iterator rend()
-    {
-        return reverse_iterator(_begin);
-    }
     const_iterator begin() const
     {
         return const_iterator(_begin);
@@ -379,6 +347,14 @@ public:
     const_iterator end() const
     {
         return const_iterator(_end);
+    }
+    reverse_iterator rbegin()
+    {
+        return reverse_iterator(_end);
+    }
+    reverse_iterator rend()
+    {
+        return reverse_iterator(_begin);
     }
     const_reverse_iterator rbegin() const
     {

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 13:39:40 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 14:32:59 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,36 +91,36 @@ namespace ft
             //iterators
             iterator begin()
             {
-                return iterator(_contaier.getRoot());
+                return iterator(_contaier.begin());
             }
-            iterator begin() const
+            const_iterator begin() const
             {
-                return iterator(_contaier.getRoot());
+                return const_iterator(_contaier.begin());
             }
             iterator end()
             {
-                return iterator(_contaier.getEnd());
+                return iterator(_contaier.end());
             }
-            iterator end() const
+            const_iterator end() const
             {
-                return iterator(_contaier.getEnd());
+                return const_iterator(_contaier.end());
             }
             //reverse iterators
             reverse_iterator rbegin()
             {
-                return reverse_iterator(_contaier.getEnd());
+                return reverse_iterator(_contaier.end());
             }
-            reverse_iterator rbegin() const
+            const_reverse_iterator rbegin() const
             {
-                return reverse_iterator(_contaier.getEnd());
+                return const_reverse_iterator(_contaier.end());
             }
             reverse_iterator rend()
             {
-                return reverse_iterator(_contaier.getRoot());
+                return reverse_iterator(_contaier.begin());
             }
-            reverse_iterator rend() const
+            const_reverse_iterator rend() const
             {
-                return reverse_iterator(_contaier.getRoot());
+                return const_reverse_iterator(_contaier.begin());
             }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Element access member functions

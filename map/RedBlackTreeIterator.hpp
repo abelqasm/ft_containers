@@ -6,87 +6,166 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 14:06:43 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 14:17:34 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 16:25:59 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REDBLACKTREEITERATOR_HPP
 #define REDBLACKTREEITERATOR_HPP
 
-namespace ft
+#include "../iterators/iterator_traits.hpp"
+#include "../iterators/reverse_iterator.hpp"
+#include "RedBlackTree.hpp"
+
+enum Color
 {
+    RED,
+    BLACK
+};
+
+template<class T>
+struct  node
+{
+    typedef T              value_type;
+
+    value_type          _value;
+    node                *_left;
+    node                *_right;
+    node                *_parent;
+    Color               _color;
+    
+    node(value_type value, node<T> *nill): _value(value), _left(nill), _right(nill), _parent(nill), _color(RED)
+    {
+    }
+    ~node()
+    {
+    }
+};
     template<class T>
-    class RedBllackTreeIterator
+    class RedBlackTreeIterator
     {
     public:
-        typedef typename iterator_traits<T>::difference_type     difference_type;
-        typedef typename iterator_traits<T>::value_type          value_type;
-        typedef typename iterator_traits<T>::pointer             pointer;
-        typedef typename iterator_traits<T>::reference           reference;
-        typedef typename std::bidirectional_iterator_tag         iterator_category;
+        typedef T                                           value_type;
+        typedef node<value_type>                            node_type;
+        typedef T&                                          reference;
+        typedef T*                                          pointer;
+        typedef std::ptrdiff_t                              difference_type;
+        typedef std::bidirectional_iterator_tag             iterator_category;
     private:
-        pointer _ptr;
+        node_type  *_node;
+        node_type  *_nill;
     public:
-        RedBllackTreeIterator() : _ptr(nullptr)
+        RedBlackTreeIterator() : _node(nullptr), _nill(nullptr)
         {
         }
-        RedBllackTreeIterator(pointer ptr) : _ptr(ptr)
+        RedBlackTreeIterator(node_type *node) : _node(node), _nill(node->_left)
         {
         }
-        pointer get() const
+        node_type *get() const
         {
-            return _ptr;
+            return _node;
         }
-        template <class U>
-        RedBllackTreeIterator(const RedBllackTreeIterator<U>& u) : _ptr(u.get())
-        {
-        }
-        ~RedBllackTreeIterator()
+        template<class U>
+        RedBlackTreeIterator(const RedBlackTreeIterator<U>& u) : _node(u.getNode), _nill(u.getNill())
         {
         }
-        RedBllackTreeIterator& operator=(const RedBllackTreeIterator& rhs)
+        ~RedBlackTreeIterator()
         {
-            _ptr = rhs._ptr;
+        }
+        node_type *getNill() const
+        {
+            return _nill;
+        }
+        node_type *getNode() const
+        {
+            return _node;
+        }
+        RedBlackTreeIterator& operator=(const RedBlackTreeIterator& rhs)
+        {
+            _node = rhs._node;
             return *this;
         }
-        reference operator*() const
+        value_type &operator*() const
         {
-            return *_ptr;
+            return _node->_value;
         }
         T operator->() const
         {
-            return _ptr;
+            return _node;
         }
-        RedBllackTreeIterator& operator++()
+        RedBlackTreeIterator& operator++()
         {
-            _ptr++;
+            if (_node->_right != _nill)
+            {
+                _node = _node->_right;
+                while (_node->_left != _nill)
+                    _node = _node->_left;
+            }
+            else
+            {
+                while (_node->_parent != _nill && _node == _node->_parent->_right)
+                    _node = _node->_parent;
+                _node = _node->_parent;
+            }
             return *this;
         }
-        RedBllackTreeIterator operator++(int)
+        RedBlackTreeIterator operator++(int)
         {
-            RedBllackTreeIterator tmp(*this);
+            RedBlackTreeIterator tmp(*this);
+            if (_node->_right != _nill)
+            {
+                _node = _node->_right;
+                while (_node->_left != _nill)
+                    _node = _node->_left;
+            }
+            else
+            {
+                while (_node->_parent != _nill && _node == _node->_parent->_right)
+                    _node = _node->_parent;
+                _node = _node->_parent;
+            }
             return tmp;
         }
-        RedBllackTreeIterator& operator--()
+        RedBlackTreeIterator& operator--()
         {
-            _ptr--;
+            if (_node->_left != _nill)
+            {
+                _node = _node->_left;
+                while (_node->_right != _nill)
+                    _node = _node->_right;
+            }
+            else
+            {
+                while (_node->_parent != _nill && _node == _node->_parent->_left)
+                    _node = _node->_parent;
+                _node = _node->_parent;
+            }
             return *this;
         }
-        RedBllackTreeIterator operator--(int)
+        RedBlackTreeIterator operator--(int)
         {
-            RedBllackTreeIterator tmp(*this);
+            RedBlackTreeIterator tmp(*this);
+            if (_node->_left != _nill)
+            {
+                _node = _node->_left;
+                while (_node->_right != _nill)
+                    _node = _node->_right;
+            }
+            else
+            {
+                while (_node->_parent != _nill && _node == _node->_parent->_left)
+                    _node = _node->p_arent;
+                _node = _node->_parent;
+            }
             return tmp;
         }
-        template <class U>
-        bool operator==(const RedBllackTreeIterator<U>& rhs) const
+        bool operator==(const RedBlackTreeIterator& rhs) const
         {
-            return _ptr == rhs.get();
+            return _node == rhs.get();
         }
-        template <class U>
-        bool operator!=(const RedBllackTreeIterator<U>& rhs) const
+        bool operator!=(const RedBlackTreeIterator& rhs) const
         {
-            return _ptr != rhs.get();
+            return _node != rhs.get();
         }
-    };
-}
+};
 #endif
