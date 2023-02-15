@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 14:06:43 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 16:25:59 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 18:56:47 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,11 @@ struct  node
         {
             return _node->_value;
         }
-        T operator->() const
+        node_type *operator&() const
+        {
+            return _node;
+        }
+        value_type operator->() const
         {
             return _node;
         }

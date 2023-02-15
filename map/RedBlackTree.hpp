@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 16:25:19 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/15 19:02:30 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ public:
 private:
     allocator_type        _alloc;
     node_type             *_root;
-    node_type             *_end;
-    node_type             *_begin;
     node_type             *_nill;
 
 //------------------------------------------------------------------------------------------------
@@ -179,26 +177,31 @@ private:
 public:
 //------------------------------------------------------------------------------------------------
     //constructors
-    RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root(), _end(_root)
+    RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root()
     {
         _nill = _alloc.allocate(1);
         _alloc.construct(_nill, node_type(value_type(), nullptr));
         _nill->_color = BLACK;
     }
-    // RedBlackTree(const RedBlackTree &t)
-    // {
-    //     *this = t;
-    // }
-    // RedBlackTree &operator=(const RedBlackTree &t)
-    // {
-    //     if (this == &t)
-    //         return ;
-    //     clear();
-    //     return *this;
-    // }
+    RedBlackTree(const RedBlackTree &t)
+    {
+        *this = t;
+    }
+    RedBlackTree &operator=(const RedBlackTree &t)
+    {
+        if (this == &t)
+            return ;
+        clear();
+        for(iterator it = t.begin(); it != t.end(); ++it)
+            insert(*it);
+        return *this;
+    }
     //destructor
     ~RedBlackTree()
     {
+        clear();
+        _alloc.destroy(_nill);
+        _alloc.deallocate(_nill, 1);
     }
 //------------------------------------------------------------------------------------------------
     // left and right rotate
@@ -232,7 +235,6 @@ public:
         {
             allocateNode(&_root, value);
             _root->_color = BLACK;
-            _begin = _end = _root;
             return;
         }
         node_type *root = _root;
@@ -245,8 +247,6 @@ public:
         allocateNode(&root, value);
         root->_parent = parent;
         value < parent->_value ? parent->_left = root : parent->_right = root;
-        value < _begin->_value ? _begin = root : 0;
-        value > _end->_value ? _end = root : 0;
         insertFixup(root);
     }
     void insertFixup(node_type *node)
@@ -258,11 +258,15 @@ public:
     // delete
     void deleteNode(node_type *node)
     {
+        if (node == _nill)
+            return ;
+        node_type   *del = node;
         node_type   *x;
         Color       yOriginalColor = node->_color;
         node->_left == _nill || node->_right == _nill ? x = hasOneChild(node) : x = hasTwoChild(node, &yOriginalColor);
         if (yOriginalColor == BLACK)
             deleteFixup(x);
+        deallocateNode(del);
     }
     void deleteFixup(node_type *node)
     {
@@ -286,6 +290,8 @@ public:
     void inOrderTraversal()
     {
         node_type *root = _root;
+        if (root == _nill)
+            return ;
         bool flag = false;
         while (root)
         {
@@ -314,17 +320,16 @@ public:
     // clear
     void clear()
     {
-        _root = _end = _nill;
+        iterator it = begin();
+        while (it != end())
+            deleteNode(&(it++));
+        _root = _nill = nullptr;
     }
 //------------------------------------------------------------------------------------------------
     // getters functions
     node_type *getRoot() const
     {
         return _root;
-    }
-    node_type *getEnd() const
-    {
-        return _end;
     }
     node_type *getNill() const
     {
@@ -334,35 +339,35 @@ public:
     // iterators
     iterator begin()
     {
-        return iterator(_begin);
+        return iterator(minimum(_root));
     }
     iterator end()
     {
-        return iterator(_end);
+        return iterator(_nill);
     }
     const_iterator begin() const
     {
-        return const_iterator(_begin);
+        return const_iterator(minimum(_root));
     }
     const_iterator end() const
     {
-        return const_iterator(_end);
+        return const_iterator(_nill);
     }
     reverse_iterator rbegin()
     {
-        return reverse_iterator(_end);
+        return reverse_iterator(maximum(_root));
     }
     reverse_iterator rend()
     {
-        return reverse_iterator(_begin);
+        return reverse_iterator(_nill);
     }
     const_reverse_iterator rbegin() const
     {
-        return const_reverse_iterator(_end);
+        return const_reverse_iterator(maximum(_root));
     }
     const_reverse_iterator rend() const
     {
-        return const_reverse_iterator(_begin);
+        return const_reverse_iterator(_nill);
     }
 };
 #endif
