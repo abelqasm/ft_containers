@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 12:12:21 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/25 11:45:20 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:07 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAKE_PAIR_HPP
-#define MAKE_PAIR_HPP
+#pragma once
 
 #include "pair.hpp"
 
@@ -23,4 +22,3 @@ namespace ft
         return ft::pair<T1, T2>(t, u);
     }
 }
-#endif

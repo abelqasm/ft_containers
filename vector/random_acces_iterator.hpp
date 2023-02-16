@@ -6,13 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:11:26 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/10 14:54:36 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RANDOM_ACCESS_ITERATOR_HPP
-#define RANDOM_ACCESS_ITERATOR_HPP
-
+#pragma once
 
 #include "../iterators/iterator_traits.hpp"
 
@@ -177,6 +175,4 @@ namespace ft
             return lhs.get() <= rhs.get();
         }
 }
-
-#endif
 

@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/16 14:50:36 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:18 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAP_HPP
-#define MAP_HPP
+#pragma once
 
 #include <memory>
 #include <iostream>
@@ -212,5 +211,3 @@ namespace ft
             }
     };
 }
-
-#endif

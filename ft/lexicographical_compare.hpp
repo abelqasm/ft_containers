@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:35:02 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/09 15:38:24 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:04 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXICOGRAPHICAL_COMPARE_HPP
-#define LEXICOGRAPHICAL_COMPARE_HPP
+#pragma once
 
 namespace ft
 {
@@ -43,4 +42,3 @@ namespace ft
         return first2 != last2;
     }
 }
-#endif

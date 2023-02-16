@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:52:09 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 16:18:13 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:44:19 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REVERSE_ITERATOR_HPP
-#define REVERSE_ITERATOR_HPP
+#pragma once
 
 #include "iterator_traits.hpp"
 
@@ -144,5 +143,3 @@ namespace ft
             return lhs.base() >= rhs.base();
         }
 }
-
-#endif

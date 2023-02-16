@@ -6,13 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 15:00:18 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/16 15:08:34 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:44:45 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IS_INTEGRAL_HPP
-#define IS_INTEGRAL_HPP
-
+#pragma once
 
 namespace ft
 {
@@ -97,4 +95,3 @@ namespace ft
         static const bool value = true;
     };
 }
-#endif

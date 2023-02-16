@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 11:22:48 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/26 11:23:35 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:26 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SET_HPP
-#define SET_HPP
+#pragma once
 
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
@@ -26,5 +25,3 @@ namespace ft
     {    
     };
 }
-
-#endif

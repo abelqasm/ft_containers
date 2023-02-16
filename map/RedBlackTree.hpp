@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/16 14:54:41 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:23 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REDBLACK_HPP
-#define REDBLACK_HPP
+#pragma once
 
 #include <memory>
 #include <iostream>
@@ -401,4 +400,3 @@ namespace ft
         }
     };
 }
-#endif

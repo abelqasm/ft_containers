@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/11 18:55:19 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:43:22 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VECTOR_HPP
-#define VECTOR_HPP
+#pragma once
 
 #include <memory>
 #include <iostream>
@@ -460,4 +459,3 @@ namespace ft
     }
 }
 
-#endif

@@ -6,14 +6,13 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 16:26:36 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/26 12:35:56 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:45:38 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STACK_HPP
-# define STACK_HPP
+#pragma once
 
-# include "../vector/vector.hpp"
+#include "../vector/vector.hpp"
 
 namespace ft
 {
@@ -102,5 +101,3 @@ namespace ft
         return !(lhs < rhs);
     }
 }
-
-#endif

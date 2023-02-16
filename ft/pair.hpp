@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 12:13:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/10 10:43:05 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:44:31 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PAIR_HPP
-#define PAIR_HPP
+#pragma once
 
 namespace ft
 {
@@ -73,5 +72,3 @@ namespace ft
         return !(lhs < rhs);
     }
 }
-
-#endif

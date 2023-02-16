@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 11:02:11 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/09 15:44:41 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:44:51 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EQUAL_HPP
-# define EQUAL_HPP
+#pragma once
 
 namespace ft
 {
@@ -41,5 +40,3 @@ namespace ft
         return (true);
     }
 }
-
-#endif

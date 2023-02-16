@@ -6,13 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:32:10 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/16 14:37:54 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:44:02 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NODE_HPP
-#define NODE_HPP
-
+#pragma once
 
 enum Color
 {
@@ -41,4 +39,3 @@ namespace ft
         }
     };
 }
-#endif

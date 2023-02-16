@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BIDIRECTIONAL_ITERATOR_HPP
-#define BIDIRECTIONAL_ITERATOR_HPP
+#pragma once
 
 #include "../iterators/iterator_traits.hpp"
 #include "../iterators/reverse_iterator.hpp"
@@ -161,5 +160,3 @@ namespace ft
         return lhs.get() != rhs.get();
     }
 }
-
-#endif

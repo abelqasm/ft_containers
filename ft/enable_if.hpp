@@ -6,12 +6,11 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 12:47:11 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/01/16 15:12:16 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 15:44:55 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENABLE_IF_HPP
-#define ENABLE_IF_HPP
+#pragma once
 
 namespace ft
 {
@@ -25,5 +24,3 @@ namespace ft
         typedef T type;
     };
 }
-
-#endif
