@@ -1,10 +1,12 @@
 .vscode
 .DS_Store
 a.out
-testStack.dSYM
 testVector.dSYM
+testStack.dSYM
+testMap.dSYM
 testVector
 testStack
+testMap
 redblack.cpp
 fancy_tree.hpp
 a.out.dSYM

@@ -6,13 +6,15 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/15 14:32:59 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 14:50:36 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include <memory>
+#include <iostream>
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
 #include "../ft/enable_if.hpp"
@@ -20,7 +22,6 @@
 #include "../iterators/reverse_iterator.hpp"
 #include "bidirectional_iterator.hpp"
 #include "RedBlackTree.hpp"
-#include <memory>
 #include <functional>
 
 namespace ft
@@ -28,7 +29,7 @@ namespace ft
     template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
     class map
     {
-    public:
+    public: 
         typedef Key                                         key_type;
         typedef T                                           mapped_type;
         typedef ft::pair<const Key, T>                      value_type;
@@ -48,10 +49,10 @@ namespace ft
         typedef ft::reverse_iterator<iterator>              reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
     private:
-            allocator_type  _alloc;
-            key_compare     _comp;
-            size_type       _containerSize;
-            RedBlackTree    _container;
+            allocator_type                  _alloc;
+            key_compare                     _comp;
+            size_type                       _containerSize;
+            ft::RedBlackTree<value_type>    _container;
     public:
         //------------------------------------------------------------------------------------------------------------------------------------
             //constructors
@@ -59,7 +60,7 @@ namespace ft
             explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp)
             {
                 _containerSize = 0;
-                _container = RedBlackTree();
+                _container = RedBlackTree<value_type>();
             }
             template <class InputIterator> 
             map (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last,
@@ -68,7 +69,7 @@ namespace ft
                 _alloc = alloc;
                 _comp = comp;
                 _containerSize = 0;
-                _container = RedBlackTree();
+                _container = RedBlackTree<value_type>();
                 insert(first, last);
             }
             map (const map& x)
@@ -80,7 +81,6 @@ namespace ft
             }
             ~map()
             {
-                clear();
             }
         //------------------------------------------------------------------------------------------------------------------------------------
             allocator_type get_allocator() const
@@ -91,36 +91,36 @@ namespace ft
             //iterators
             iterator begin()
             {
-                return iterator(_contaier.begin());
+                return iterator(_container.begin());
             }
             const_iterator begin() const
             {
-                return const_iterator(_contaier.begin());
+                return const_iterator(_container.begin());
             }
             iterator end()
             {
-                return iterator(_contaier.end());
+                return iterator(_container.end());
             }
             const_iterator end() const
             {
-                return const_iterator(_contaier.end());
+                return const_iterator(_container.end());
             }
             //reverse iterators
             reverse_iterator rbegin()
             {
-                return reverse_iterator(_contaier.end());
+                return reverse_iterator(_container.end());
             }
             const_reverse_iterator rbegin() const
             {
-                return const_reverse_iterator(_contaier.end());
+                return const_reverse_iterator(_container.end());
             }
             reverse_iterator rend()
             {
-                return reverse_iterator(_contaier.begin());
+                return reverse_iterator(_container.begin());
             }
             const_reverse_iterator rend() const
             {
-                return const_reverse_iterator(_contaier.begin());
+                return const_reverse_iterator(_container.begin());
             }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Element access member functions
@@ -145,7 +145,7 @@ namespace ft
             {
                 return _comp;
             }
-            value_compare value_comp() const;
+            // value_compare value_comp() const;
         //------------------------------------------------------------------------------------------------------------------------------------
             // Operations member functions
             iterator find(const key_type& k)
@@ -165,13 +165,45 @@ namespace ft
             ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
         //------------------------------------------------------------------------------------------------------------------------------------
             // Modifiers member functions
-            ft::pair<iterator, bool> insert(const value_type& val);
-            iterator insert(iterator position, const value_type& val);
+            ft::pair<iterator, bool> insert(const value_type& val)
+            {
+                ft::pair<iterator, bool> ret;
+                ret.first = iterator(_container.insert(val));
+                ret.second = ret.first != end();
+                if (ret.second)
+                    _containerSize++;
+                return ret;
+            }
+            iterator insert(iterator position, const value_type& val)
+            {
+                iterator ret = iterator(_container.insert(position, val));
+                if (ret != end())
+                    _containerSize++;
+                return ret;
+            }
             template <class InputIterator>
-            void insert(InputIterator first, InputIterator last);
-            void erase(iterator position);
+            void insert(InputIterator first, InputIterator last)
+            {
+                while (first != last)
+                {
+                    _container.insert(*first++);
+                    _containerSize++;
+                }
+            }
+            void erase(iterator position)
+            {
+                _container.deletnode(&position);
+                _containerSize--;
+            }
             size_type erase(const key_type& k);
-            void erase(iterator first, iterator last);
+            void erase(iterator first, iterator last)
+            {
+                while (first != last)
+                {
+                    erase(first++);
+                    _containerSize--;
+                }
+            }
             void swap(map& x);
             void clear()
             {
