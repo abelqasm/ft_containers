@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/16 15:45:18 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/16 18:19:07 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,24 +29,25 @@ namespace ft
     class map
     {
     public: 
-        typedef Key                                         key_type;
-        typedef T                                           mapped_type;
-        typedef ft::pair<const Key, T>                      value_type;
-        typedef Compare                                     key_compare;
-        typedef Allocator                                   allocator_type;
-        
-        typedef typename allocator_type::reference          reference;
-        typedef typename allocator_type::const_reference    const_reference;
-        typedef typename allocator_type::pointer            pointer;
-        typedef typename allocator_type::const_pointer      const_pointer;
-        typedef typename allocator_type::size_type          size_type;
-        typedef typename allocator_type::difference_type    difference_type;
+        typedef Key                                                     key_type;
+        typedef T                                                       mapped_type;
+        typedef ft::pair<const Key, T>                                  value_type;
+        typedef Compare                                                 key_compare;
+        typedef Allocator                                               allocator_type;
+        typedef typename ft::RedBlackTree<value_type, allocator_type>   container_type;
+
+        typedef typename allocator_type::reference                      reference;
+        typedef typename allocator_type::const_reference                const_reference;
+        typedef typename allocator_type::pointer                        pointer;
+        typedef typename allocator_type::const_pointer                  const_pointer;
+        typedef typename allocator_type::size_type                      size_type;
+        typedef typename allocator_type::difference_type                difference_type;
 
     
-        typedef ft::bidirectional_iterator<pointer>         iterator;
-        typedef ft::bidirectional_iterator<const_pointer>   const_iterator;
-        typedef ft::reverse_iterator<iterator>              reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>        const_reverse_iterator;
+        typedef typename container_type::iterator                        iterator;
+        typedef typename container_type::const_iterator                  const_iterator;
+        typedef ft::reverse_iterator<iterator>                           reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>                     const_reverse_iterator;
     private:
             allocator_type                  _alloc;
             key_compare                     _comp;
@@ -56,19 +57,14 @@ namespace ft
         //------------------------------------------------------------------------------------------------------------------------------------
             //constructors
             //default ------------------------------------------------------------------------------------------------------------------------------------
-            explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp)
+            explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp), _containerSize(0), _container()
             {
-                _containerSize = 0;
-                _container = RedBlackTree<value_type>();
             }
+
             template <class InputIterator> 
             map (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last,
-                    const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+                    const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): _alloc(alloc), _comp(comp), _containerSize(0), _container()
             {
-                _alloc = alloc;
-                _comp = comp;
-                _containerSize = 0;
-                _container = RedBlackTree<value_type>();
                 insert(first, last);
             }
             map (const map& x)
@@ -167,7 +163,7 @@ namespace ft
             ft::pair<iterator, bool> insert(const value_type& val)
             {
                 ft::pair<iterator, bool> ret;
-                ret.first = iterator(_container.insert(val));
+                ret.first = _container.insert(val);
                 ret.second = ret.first != end();
                 if (ret.second)
                     _containerSize++;
@@ -175,7 +171,7 @@ namespace ft
             }
             iterator insert(iterator position, const value_type& val)
             {
-                iterator ret = iterator(_container.insert(position, val));
+                iterator ret = _container.insert(position, val);
                 if (ret != end())
                     _containerSize++;
                 return ret;

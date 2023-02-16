@@ -66,9 +66,9 @@ namespace ft
         {
             return _node;
         }
-        value_type operator->() const
+        value_type *operator->() const
         {
-            return _node->_value;
+            return &_node->_value;
         }
         value_type getValue() const
         {
