@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 17:02:07 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/18 17:30:43 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/18 20:48:46 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ int main()
     std::cout << std::endl;
     std::cout << "ft::map size after insert " << ft_map.size() << std::endl;
     std::cout << ft_map.find(200)->second << std::endl;
-    // ft::map<int, int>::const_iterator it = ft_map.begin();
-    // ft::map<int, int>::const_iterator cstIt(it);
-    // if (cstIt == it)
-    //     std::cout << "cstIt == it" << std::endl;
+    ft::map<int, int>::const_iterator it = ft_map.begin();
+    ft::map<int, int>::const_iterator cstIt(it);
+    if (cstIt == it)
+        std::cout << "cstIt == it" << std::endl;
 //-----------------------------------------std::map-----------------------------------------
     std::cout << "-----------------------------------------std::map-----------------------------------------" << std::endl;
     std::map<int, int> std_map;

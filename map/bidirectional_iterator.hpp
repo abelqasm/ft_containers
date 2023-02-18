@@ -22,12 +22,12 @@ namespace ft
     class bidirectional_iterator
     {
     public:
-        typedef T                                           value_type;
-        typedef ft::node<value_type>                        node_type;
-        typedef T&                                          reference;
-        typedef T*                                          pointer;
-        typedef std::ptrdiff_t                              difference_type;
-        typedef std::bidirectional_iterator_tag             iterator_category;
+        typedef typename iterator_traits<T*>::value_type              value_type;
+        typedef typename iterator_traits<T*>::reference               reference;
+        typedef typename iterator_traits<T*>::pointer                 pointer;
+        typedef typename iterator_traits<T*>::difference_type         difference_type;
+        typedef std::bidirectional_iterator_tag                       iterator_category;
+        typedef ft::node<value_type>                                  node_type;
     private:
         node_type  *_node;
         node_type  *_nill;
