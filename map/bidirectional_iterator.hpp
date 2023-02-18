@@ -38,10 +38,6 @@ namespace ft
         bidirectional_iterator(node_type *node) : _node(node), _nill(node->_left)
         {
         }
-        node_type *get() const
-        {
-            return _node;
-        }
         template<class U>
         bidirectional_iterator(const bidirectional_iterator<U>& u) : _node(u.getNode()), _nill(u.getNill())
         {
@@ -62,9 +58,9 @@ namespace ft
             _node = rhs._node;
             return *this;
         }
-        node_type *operator*() const
+        value_type &operator*() const
         {
-            return _node;
+            return _node->_value;
         }
         value_type *operator->() const
         {
@@ -142,21 +138,21 @@ namespace ft
         }
         bool operator==(const bidirectional_iterator& rhs) const
         {
-            return _node == rhs.get();
+            return _node == rhs.getNode();
         }
         bool operator!=(const bidirectional_iterator& rhs) const
         {
-            return _node != rhs.get();
+            return _node != rhs.getNode();
         }
     };
     template<class T, class T2>
     bool operator==(const bidirectional_iterator<T>& lhs, const bidirectional_iterator<T2>& rhs)
     {
-        return lhs.get() == rhs.get();
+        return lhs.getNode() == rhs.getNode();
     }
     template<class T, class T2>
     bool operator!=(const bidirectional_iterator<T>& lhs, const bidirectional_iterator<T2>& rhs)
     {
-        return lhs.get() != rhs.get();
+        return lhs.getNode() != rhs.getNode();
     }
 }

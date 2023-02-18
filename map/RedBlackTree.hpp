@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/16 15:45:23 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/18 15:36:59 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,39 @@
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
 #include "bidirectional_iterator.hpp"
+#include "map.hpp"
 
 enum LeftRight
 {
     LEFT,
     RIGHT
 };
+
 namespace ft
 {
 
-    template<class T, class Allocator = std::allocator<ft::node<T> > >
+    template<class T, class Comp, class Comparator = std::less<T>, class Allocator = std::allocator<ft::node<T> > >
     class RedBlackTree
     {
     public:
-        typedef T                                           value_type;
-        typedef Allocator                                   allocator_type;
-        typedef typename allocator_type::size_type          size_type;
-        typedef typename allocator_type::reference          reference;
-        typedef typename allocator_type::const_reference    const_reference;
-        typedef typename allocator_type::pointer            pointer;
-        typedef typename allocator_type::const_pointer      const_pointer;
-        typedef typename allocator_type::difference_type    difference_type;
-        typedef ft::node<value_type>                        node_type;
-        typedef ft::node<const value_type>                  const_node_type;
+        typedef T                                                             value_type;
+        typedef Comparator                                                    key_compare;
+        typedef Allocator                                                     allocator_type;
+        typedef Comp                                                          value_compare;
+        typedef typename allocator_type::template rebind<ft::node<T> >::other node_allocatore;
+        
+        typedef ft::node<value_type>                                          node_type;
+        typedef ft::node<const value_type>                                    const_node_type;
 
-        typedef ft::bidirectional_iterator<value_type>          iterator;
-        typedef ft::bidirectional_iterator<const value_type>    const_iterator;
-        typedef ft::reverse_iterator<iterator>                  reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
+        typedef ft::bidirectional_iterator<value_type>                        iterator;
+        typedef ft::bidirectional_iterator<const value_type>                  const_iterator;
+        typedef ft::reverse_iterator<iterator>                                reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>                          const_reverse_iterator;
     private:
-        allocator_type        _alloc;
-        node_type             *_root;
-        node_type             *_nill;
-
+        node_allocatore        _alloc;
+        node_type              *_root;
+        node_type              *_nill;
+        value_compare          _comp;
     //------------------------------------------------------------------------------------------------
         // allocate node and construct it
         void allocateNode(node_type **locatedNode, value_type value)
@@ -165,24 +165,25 @@ namespace ft
     //------------------------------------------------------------------------------------------------
         node_type *minimum(node_type *node)
         {
-            while (node->_left != _nill)
+            while (node != _nill && node->_left != _nill)
                 node = node->_left;
             return node;
         }
         node_type *maximum(node_type *node)
         {
-            while (node->_right != _nill)
+            while (node != _nill && node->_right != _nill)
                 node = node->_right;
             return node;
         }
     public:
     //------------------------------------------------------------------------------------------------
         //constructors
-        RedBlackTree(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _root()
+        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(key_compare())) : _alloc(alloc), _comp(comp)
         {
             _nill = _alloc.allocate(1);
             _alloc.construct(_nill, node_type(value_type(), nullptr));
             _nill->_color = BLACK;
+            _root = _nill;
         }
         RedBlackTree(const RedBlackTree &t)
         {
@@ -200,9 +201,9 @@ namespace ft
         //destructor
         ~RedBlackTree()
         {
-            clear();
-            _alloc.destroy(_nill);
-            _alloc.deallocate(_nill, 1);
+            if (_root != _nill)
+                clear();
+            deallocateNode(_nill);
         }
     //------------------------------------------------------------------------------------------------
         // left and right rotate
@@ -232,7 +233,7 @@ namespace ft
         // insert
         iterator insert(value_type value)
         {
-            if (!_root)
+            if (_root == _nill)
             {
                 allocateNode(&_root, value);
                 _root->_color = BLACK;
@@ -243,11 +244,11 @@ namespace ft
             while (root != _nill) 
             {
                 parent = root;
-                value < root->_value ? root = root->_left : root = root->_right;
+                _comp(value , root->_value) ? root = root->_left : root = root->_right;
             }
             allocateNode(&root, value);
             root->_parent = parent;
-            value < parent->_value ? parent->_left = root : parent->_right = root;
+            _comp(value , parent->_value) ? parent->_left = root : parent->_right = root;
             insertFixup(root);
             return iterator(root);
         }
@@ -260,11 +261,11 @@ namespace ft
             while (root != _nill) 
             {
                 parent = root;
-                value < root->_value ? root = root->_left : root = root->_right;
+                _comp(value , root->_value) ? root = root->_left : root = root->_right;
             }
             allocateNode(&root, value);
             root->_parent = parent;
-            value < parent->_value ? parent->_left = root : parent->_right = root;
+            _comp(value , parent->_value) ? parent->_left = root : parent->_right = root;
             return iterator(root);
         }
         void insertFixup(node_type *node)
@@ -351,8 +352,8 @@ namespace ft
         {
             iterator it = begin();
             while (it != end())
-                deleteNode(*it++);
-            _root = _nill = nullptr;
+                deleteNode((it++).getNode());
+            _root = nullptr;
         }
     //------------------------------------------------------------------------------------------------
         // getters functions
