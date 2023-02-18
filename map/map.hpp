@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/18 15:38:30 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/18 17:36:25 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 #include <memory>
 #include <iostream>
+#include "../ft/equal.hpp"
+#include "../ft/lexicographical_compare.hpp"
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
 #include "../ft/enable_if.hpp"
@@ -166,8 +168,8 @@ namespace ft
             // Operations member functions
             iterator find(const key_type& k)
             {
-                iterator it = _container.begin();
-                while (it != _container.end())
+                iterator it = begin();
+                while (it != end())
                 {
                     if (it->first == k)
                         return it;
@@ -177,8 +179,8 @@ namespace ft
             }
             const_iterator find(const key_type& k) const
             {
-                const_iterator it = _container.begin();
-                while (it != _container.end())
+                const_iterator it = begin();
+                while (it !=end())
                 {
                     if (it->first == k)
                         return it;
@@ -189,8 +191,8 @@ namespace ft
             size_type count(const key_type& k) const;
             iterator lower_bound(const key_type& k)
             {
-                iterator it = _container.begin();
-                while (it != _container.end())
+                iterator it = begin();
+                while (it != end())
                 {
                     if (it->first >= k)
                         return it;
@@ -200,8 +202,8 @@ namespace ft
             }
             const_iterator lower_bound(const key_type& k) const
             {
-                const_iterator it = _container.begin();
-                while (it != _container.end())
+                const_iterator it = begin();
+                while (it != end())
                 {
                     if (it->first >= k)
                         return it;
@@ -211,8 +213,8 @@ namespace ft
             }
             iterator upper_bound(const key_type& k)
             {
-                iterator it = _container.begin();
-                while (it != _container.end())
+                iterator it = begin();
+                while (it != end())
                 {
                     if (it->first > k)
                         return it;
@@ -222,8 +224,8 @@ namespace ft
             }
             const_iterator upper_bound(const key_type& k) const
             {
-                const_iterator it = _container.begin();
-                while (it != _container.end())
+                const_iterator it = begin();
+                while (it != end())
                 {
                     if (it->first > k)
                         return it;
@@ -239,7 +241,7 @@ namespace ft
             {
                 ft::pair<iterator, bool> ret;
                 ret.first = _container.insert(val);
-                ret.second = ret.first != end();
+                ret.second = (ret.first != end());
                 if (ret.second)
                     _containerSize++;
                 return ret;
@@ -265,7 +267,19 @@ namespace ft
                 _container.deleteNode(position.getNode());
                 _containerSize--;
             }
-            size_type erase(const key_type& k);
+            size_type erase(const key_type& k)
+            {
+                for (iterator it = begin(); it != end(); ++it)
+                {
+                    if (it->first == k)
+                    {
+                        _container.deleteNode(it.getNode());
+                        _containerSize--;
+                        return 1;
+                    }
+                }
+                return 0;
+            }
             void erase(iterator first, iterator last)
             {
                 while (first != last)

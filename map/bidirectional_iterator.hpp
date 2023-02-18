@@ -38,6 +38,10 @@ namespace ft
         bidirectional_iterator(node_type *node) : _node(node), _nill(node->_left)
         {
         }
+        node_type *get() const
+        {
+            return _node;
+        }
         template<class U>
         bidirectional_iterator(const bidirectional_iterator<U>& u) : _node(u.getNode()), _nill(u.getNill())
         {
