@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/18 17:28:08 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 13:45:57 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,13 +163,13 @@ namespace ft
             sibling->_left->_color == BLACK && sibling->_right->_color == BLACK ? noRedChild(node, &sibling) : redChild(node, &sibling, leftright);
         }
     //------------------------------------------------------------------------------------------------
-        node_type *minimum(node_type *node)
+        node_type *minimum(node_type *node) const
         {
             while (node != _nill && node->_left != _nill)
                 node = node->_left;
             return node;
         }
-        node_type *maximum(node_type *node)
+        node_type *maximum(node_type *node) const
         {
             while (node != _nill && node->_right != _nill)
                 node = node->_right;
@@ -185,8 +185,12 @@ namespace ft
             _nill->_color = BLACK;
             _root = _nill;
         }
-        RedBlackTree(const RedBlackTree &t)
+        RedBlackTree(const RedBlackTree &t) : _alloc(t._alloc), _comp(t._comp)
         {
+            _nill = _alloc.allocate(1);
+            _alloc.construct(_nill, node_type(value_type(), nullptr));
+            _nill->_color = BLACK;
+            _root = _nill;
             *this = t;
         }
         RedBlackTree &operator=(const RedBlackTree &t)
@@ -237,11 +241,11 @@ namespace ft
             {
                 allocateNode(&_root, value);
                 _root->_color = BLACK;
-                return iterator(_root);
+                return iterator(_root, _root);
             }
             node_type *root = _root;
             node_type *parent = _nill;
-            while (root != _nill) 
+            while (root != _nill)
             {
                 parent = root;
                 _comp(value , root->_value) ? root = root->_left : root = root->_right;
@@ -250,11 +254,11 @@ namespace ft
             root->_parent = parent;
             _comp(value , parent->_value) ? parent->_left = root : parent->_right = root;
             insertFixup(root);
-            return iterator(root);
+            return iterator(root, _root);
         }
         iterator insert(iterator position, value_type value)
         {
-            if (!_root)
+            if (_root == _nill)
                 return insert(value);
             node_type *root = &position;
             node_type *parent = _nill;
@@ -266,7 +270,7 @@ namespace ft
             allocateNode(&root, value);
             root->_parent = parent;
             _comp(value , parent->_value) ? parent->_left = root : parent->_right = root;
-            return iterator(root);
+            return iterator(root, _root);
         }
         void insertFixup(node_type *node)
         {
@@ -353,7 +357,7 @@ namespace ft
             iterator it = begin();
             while (it != end())
                 deleteNode((it++).getNode());
-            _root = nullptr;
+            _root = _nill;
         }
     //------------------------------------------------------------------------------------------------
         // getters functions
@@ -369,35 +373,35 @@ namespace ft
         // iterators
         iterator begin()
         {
-            return iterator(minimum(_root));
+            return iterator(minimum(_root), _root);
         }
         iterator end()
         {
-            return iterator(_nill);
+            return iterator(_nill, _root);
         }
         const_iterator begin() const
         {
-            return const_iterator(minimum(_root));
+            return const_iterator(minimum(_root), _root);
         }
         const_iterator end() const
         {
-            return const_iterator(_nill);
+            return const_iterator(_nill, _root);
         }
         reverse_iterator rbegin()
         {
-            return reverse_iterator(maximum(_root));
+            return reverse_iterator(maximum(_root), _root);
         }
         reverse_iterator rend()
         {
-            return reverse_iterator(_nill);
+            return reverse_iterator(_nill, _root);
         }
         const_reverse_iterator rbegin() const
         {
-            return const_reverse_iterator(maximum(_root));
+            return const_reverse_iterator(maximum(_root), _root);
         }
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator(_nill);
+            return const_reverse_iterator(_nill, _root);
         }
     };
 }

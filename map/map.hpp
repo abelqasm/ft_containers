@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/18 17:36:25 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 15:48:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,16 @@ namespace ft
             {
                 insert(first, last);
             }
-            map (const map& x)
+            map (const map& x) : _alloc(x._alloc), _comp(x._comp), _containerSize(x._containerSize), _container(x._container)
             {
-                _alloc = x._alloc;
-                _comp = x._comp;
+            }
+            map& operator=(const map& x)
+            {
+                if (this == &x)
+                    return *this;
                 _containerSize = x._containerSize;
                 _container = x._container;
+                return *this;
             }
             ~map()
             {
@@ -143,6 +147,20 @@ namespace ft
         //------------------------------------------------------------------------------------------------------------------------------------
             // Element access member functions
             mapped_type& operator[](const key_type& k);
+            mapped_type& at (const key_type& k)
+            {
+                iterator it = find(k);
+                if (it == end())
+                    throw std::out_of_range("key not found");
+                return it->second;
+            }
+            const mapped_type& at (const key_type& k) const
+            {
+                const_iterator it = find(k);
+                if (it == end())
+                    throw std::out_of_range("key not found");
+                return it->second;
+            }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Capacity member functions
             bool empty() const
@@ -180,7 +198,7 @@ namespace ft
             const_iterator find(const key_type& k) const
             {
                 const_iterator it = begin();
-                while (it !=end())
+                while (it != end())
                 {
                     if (it->first == k)
                         return it;

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 17:56:50 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/09 13:53:14 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 15:08:07 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,17 +89,7 @@ int main()
     for (ft::vector<int>::iterator it = insert.begin(); it != insert.end(); it++)
         std::cout << *it << " ";
     std::cout << std::endl;
-    insert.insert(insert.begin() + 7, 21, 88);
-    std::cout << "ft::vector after insert m3essba ---> " ;
-    for (ft::vector<int>::iterator it = insert.begin(); it != insert.end(); it++)
-        std::cout << *it << " ";
-    ft::vector<int> ftref;
-    ft::vector<int>::reference rr = ftref.back();
-    std::cout << rr << std::endl;
-    // ft::vector<int>::const_iterator cstItr = insert.begin();
-    // ft::vector<int>::iterator itr = cstItr;
-    // *cstItr = 100;
-    // insert.erase(cstItr);
+    std::cout << "ft::vector after insert m3essba ---> " << std::endl;
     std::cout << std::endl;
 
     //----------------------ft::assign--------------------------
@@ -182,6 +172,10 @@ int main()
     std::cout << "std::vector after push_back 5 ---> ";
     for(std::vector<int>::iterator it = stdvec.begin(); it != stdvec.end(); it++)
         std::cout << *it << " ";
+    std::vector<int>::iterator nd = stdvec.end();
+    nd--;
+    std::cout << "nd afet minus minus ---> " << std::endl;
+    std::cout << *nd << std::endl;
     std::vector<int> test;
     std::vector<int>::reference ref = test.back();
     (void)(ref);

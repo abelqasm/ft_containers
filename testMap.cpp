@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 17:02:07 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/18 20:48:46 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 13:56:12 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ int main()
     ft::map<int, int> ft_map;
     std::vector<ft::pair<int, int> > vec(3);
 
+    ft::map<int, int> map1;
+    ft::map<int, int> map2;
+
+    map1 = map2;
+    //---------------------------------ft::insert-------------------------------------------------
     ft_map.insert(ft::make_pair(10, 20));
     ft_map.insert(ft::make_pair(20, 30));
     ft_map.insert(ft::make_pair(5, 40));
@@ -30,16 +35,23 @@ int main()
     for (ft::map<int ,int>::iterator it = ft_map.begin(); it != ft_map.end(); it++)
         std::cout << "the key -> " << it->first << " its value " << it->second << std::endl;
     std::cout << std::endl;
+    //---------------------------------ft::size-------------------------------------------------
     std::cout << "ft::map size after insert " << ft_map.size() << std::endl;
-    std::cout << ft_map.find(200)->second << std::endl;
-    ft::map<int, int>::const_iterator it = ft_map.begin();
-    ft::map<int, int>::const_iterator cstIt(it);
-    if (cstIt == it)
-        std::cout << "cstIt == it" << std::endl;
+    // ft::map<int, int>::const_iterator it = ft_map.begin();
+    // ft::map<int, int>::const_iterator cstIt(it);
+    // if (cstIt == it)
+    //     std::cout << "cstIt == it" << std::endl;
+    //---------------------------------ft::assignement-------------------------------------------------
+    ft::map<int, int> ft_map2;
+    ft_map2 = ft_map;
+    std::cout << "ft::map  after assignement " << std::endl;
+    for (ft::map<int ,int>::iterator it = ft_map2.begin(); it != ft_map2.end(); it++)
+        std::cout << "the key -> " << it->first << " its value " << it->second << std::endl;
 //-----------------------------------------std::map-----------------------------------------
     std::cout << "-----------------------------------------std::map-----------------------------------------" << std::endl;
     std::map<int, int> std_map;
     std::vector<std::pair<int, int> > vec2(3);
+    //---------------------------------std::insert-------------------------------------------------
     std_map.insert(std::make_pair(10, 20));
     std_map.insert(std::make_pair(20, 30));
     std_map.insert(std::make_pair(5, 40));
@@ -48,6 +60,13 @@ int main()
     for (std::map<int ,int>::iterator it = std_map.begin(); it != std_map.end(); it++)
         std::cout << "the key -> " << it->first << " its value " << it->second << std::endl;
     std::cout << std::endl;
+    //---------------------------------std::size-------------------------------------------------
     std::cout << "std::map size after insert " << std_map.size() << std::endl;
+    //---------------------------------std::assignement-------------------------------------------------
+    std::map<int, int> std_map2;
+    std_map2 = std_map;
+    std::cout << "std::map  after assignement " << std::endl;
+    for (std::map<int ,int>::iterator it = std_map2.begin(); it != std_map2.end(); it++)
+        std::cout << "the key -> " << it->first << " its value " << it->second << std::endl;
     std::cout << std::endl;
 }
