@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/19 15:48:40 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 17:11:38 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,9 @@ namespace ft
             // Modifiers member functions
             ft::pair<iterator, bool> insert(const value_type& val)
             {
+                iterator it = find(val.first);
+                if (it != end())
+                    return ft::pair<iterator, bool>(it, false);
                 ft::pair<iterator, bool> ret;
                 ret.first = _container.insert(val);
                 ret.second = (ret.first != end());
@@ -266,6 +269,9 @@ namespace ft
             }
             iterator insert(iterator position, const value_type& val)
             {
+                iterator it = find(val.first);
+                if (it != end())
+                    return it;
                 iterator ret = _container.insert(position, val);
                 if (ret != end())
                     _containerSize++;
@@ -274,9 +280,13 @@ namespace ft
             template <class InputIterator>
             void insert(InputIterator first, InputIterator last)
             {
+                iterator it;
                 while (first != last)
                 {
-                    _container.insert(*first++);
+                    it = find(first->first);
+                    if (it == end())
+                        _container.insert(*first);
+                    ++first;
                     _containerSize++;
                 }
             }

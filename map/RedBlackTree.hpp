@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/19 13:45:57 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 17:08:20 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ namespace ft
                 clear();
             deallocateNode(_nill);
         }
-    //------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
         // left and right rotate
         void leftRotate(node_type *node)
         {
@@ -260,7 +260,7 @@ namespace ft
         {
             if (_root == _nill)
                 return insert(value);
-            node_type *root = &position;
+            node_type *root = position.getNode();
             node_type *parent = _nill;
             while (root != _nill) 
             {

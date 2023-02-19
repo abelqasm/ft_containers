@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 17:02:07 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/19 13:56:12 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:51:26 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int main()
     std::cout << "ft::map  after assignement " << std::endl;
     for (ft::map<int ,int>::iterator it = ft_map2.begin(); it != ft_map2.end(); it++)
         std::cout << "the key -> " << it->first << " its value " << it->second << std::endl;
+    
 //-----------------------------------------std::map-----------------------------------------
     std::cout << "-----------------------------------------std::map-----------------------------------------" << std::endl;
     std::map<int, int> std_map;
