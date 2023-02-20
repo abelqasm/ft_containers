@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 17:02:07 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/20 13:04:14 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:00:48 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,35 +51,7 @@ int main()
     ft::map<int, int>::reverse_iterator rit = ft_map.rbegin();
     std::cout << "ft::map  after reverse iterator " << std::endl;
     std::cout << "the key -> " << rit->first << " its value " << rit->second << std::endl;
-    ft::map<int, int>::reverse_iterator it = ft_map.rbegin();
-    ft::map<int, int>::reverse_iterator it2 = ft_map.rbegin();
-    ft::map<int, int>::const_reverse_iterator cit = ft_map.rbegin();
-    ft::map<int, int>::const_reverse_iterator cit2 = ft_map.rbegin();
-
-    if (it == it2) {
-        std::cout << "Equal"<< std::endl;
-    }
-    if (it == cit) {
-        std::cout << "Equal."<< std::endl;
-    }
-    if (cit == cit2) {
-        std::cout << "Equal.."<< std::endl;
-    }
-    if (it != it2) {
-        std::cout << "Not Equal"<< std::endl;
-    }
-    if (it != cit) {
-        std::cout << "Not Equal."<< std::endl;
-    }
-    if (cit != cit2) {
-        std::cout << "Not Equal.."<< std::endl;
-    }
-    ++it;
-    std::cout << "Key:"<< it->first<< std::endl;
-    std::cout << "Value:"<< it->second<< std::endl;
-    ++cit;
-     std::cout << "Key:"<< cit->first<< std::endl;
-    std::cout << "Value:"<< cit->second<< std::endl;                                                                               
+   //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------std::map----------------------------------------------------------------------------------
     std::cout << "-----------------------------------------std::map-----------------------------------------" << std::endl;
     std::map<int, int> std_map;

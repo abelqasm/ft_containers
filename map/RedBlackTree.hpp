@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/20 13:15:33 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:20:56 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,19 @@ enum LeftRight
     RIGHT
 };
 
+template<class T>
+class key_equal : public std::binary_function<T, T, bool>
+{
+public:
+    typedef bool result_type;
+    typedef T first_argument_type;
+    typedef T second_argument_type;
+    bool operator() (const T& x, const T& y) const
+    {
+      return x.first == y.first;
+    }
+};
+
 namespace ft
 {
 
@@ -36,6 +49,7 @@ namespace ft
         typedef T                                                             value_type;
         typedef Comparator                                                    key_compare;
         typedef Allocator                                                     allocator_type;
+        typedef key_equal<value_type>                                         equal_key;
         typedef Comp                                                          value_compare;
         typedef typename allocator_type::template rebind<ft::node<T> >::other node_allocatore;
         
@@ -51,6 +65,8 @@ namespace ft
         node_type              *_root;
         node_type              *_nill;
         value_compare          _comp;
+        equal_key              _equal;
+        size_t                 _treeSize;
     //------------------------------------------------------------------------------------------------
         // allocate node and construct it
         void allocateNode(node_type **locatedNode, value_type value)
@@ -178,14 +194,14 @@ namespace ft
     public:
     //------------------------------------------------------------------------------------------------
         //constructors
-        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(key_compare())) : _alloc(alloc), _comp(comp)
+        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(key_compare()), const equal_key &equal = equal_key()) : _alloc(alloc), _comp(comp), _equal(equal), _treeSize(0)
         {
             _nill = _alloc.allocate(1);
             _alloc.construct(_nill, node_type(value_type(), nullptr));
             _nill->_color = BLACK;
             _root = _nill;
         }
-        RedBlackTree(const RedBlackTree &t) : _alloc(t._alloc), _comp(t._comp)
+        RedBlackTree(const RedBlackTree &t) : _alloc(t._alloc), _comp(t._comp), _equal(t._equal), _treeSize(0)
         {
             _nill = _alloc.allocate(1);
             _alloc.construct(_nill, node_type(value_type(), nullptr));
@@ -241,6 +257,7 @@ namespace ft
             {
                 allocateNode(&_root, value);
                 _root->_color = BLACK;
+                _treeSize++;
                 return iterator(_root, _root);
             }
             node_type *root = _root;
@@ -248,11 +265,14 @@ namespace ft
             while (root != _nill)
             {
                 parent = root;
+                if (_equal(value , root->_value))
+                    return iterator(root, _root);
                 _comp(value , root->_value) ? root = root->_left : root = root->_right;
             }
             allocateNode(&root, value);
             root->_parent = parent;
             _comp(value , parent->_value) ? parent->_left = root : parent->_right = root;
+            _treeSize++;
             insertFixup(root);
             return iterator(root, _root);
         }
@@ -270,6 +290,7 @@ namespace ft
             allocateNode(&root, value);
             root->_parent = parent;
             _comp(value , parent->_value) ? parent->_left = root : parent->_right = root;
+            _treeSize++;
             return iterator(root, _root);
         }
         void insertFixup(node_type *node)
@@ -289,6 +310,7 @@ namespace ft
             node->_left == _nill || node->_right == _nill ? x = hasOneChild(node) : x = hasTwoChild(node, &yOriginalColor);
             if (yOriginalColor == BLACK)
                 deleteFixup(x);
+            _treeSize--;
             deallocateNode(del);
         }
         void deleteFixup(node_type *node)
@@ -369,27 +391,31 @@ namespace ft
         {
             return _nill;
         }
+        size_t getSize() const
+        {
+            return _treeSize;
+        }
     //------------------------------------------------------------------------------------------------
         // iterators
         iterator begin()
         {
             _nill->_right = maximum(_root);
-            return iterator(minimum(_root), getNill());
+            return iterator(minimum(_root), _nill);
         }
         const_iterator begin() const
         {
             _nill->_right = maximum(_root);
-            return const_iterator(minimum(_root), getNill());
+            return const_iterator(minimum(_root), _nill);
         }
         iterator end()
         {
             _nill->_right = maximum(_root);
-            return iterator(_nill, getNill());
+            return iterator(_nill, _nill);
         }
         const_iterator end() const
         {
             _nill->_right = maximum(_root);
-            return const_iterator(_nill, getNill());
+            return const_iterator(_nill, _nill);
         }
         // reverse iterators
         reverse_iterator rbegin()

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/20 10:21:14 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:14:44 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,29 +70,27 @@ namespace ft
     private:
             allocator_type                  _alloc;
             key_compare                     _comp;
-            size_type                       _containerSize;
             container_type                  _container;
     public:
         //------------------------------------------------------------------------------------------------------------------------------------
             //constructors
             //default ------------------------------------------------------------------------------------------------------------------------------------
-            explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp), _containerSize(0), _container()
+            explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp), _container()
             {
             }
             template <class InputIterator>
             map (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last,
-                    const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp), _containerSize(0), _container()
+                    const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _comp(comp), _container()
             {
                 insert(first, last);
             }
-            map (const map& x) : _alloc(x._alloc), _comp(x._comp), _containerSize(x._containerSize), _container(x._container)
+            map (const map& x) : _alloc(x._alloc), _comp(x._comp), _container(x._container)
             {
             }
             map& operator=(const map& x)
             {
                 if (this == &x)
                     return *this;
-                _containerSize = x._containerSize;
                 _container = x._container;
                 return *this;
             }
@@ -148,10 +146,9 @@ namespace ft
             // Element access member functions
             mapped_type& operator[](const key_type& k)
             {
-                iterator it = find(k);
-                if (it != end())
+                iterator it = lower_bound(k);
+                if (it->first == k)
                     return it->second;
-                _containerSize++;
                 return _container.insert(ft::make_pair(k, mapped_type()))->second;
             }
             mapped_type& at (const key_type& k)
@@ -172,11 +169,11 @@ namespace ft
             // Capacity member functions
             bool empty() const
             {
-                return _containerSize == 0;
+                return _container.getSize() == 0;
             }
             size_type size() const
             {
-                return _containerSize;
+                return _container.getSize();
             }
             size_type max_size() const
             {
@@ -274,14 +271,10 @@ namespace ft
             // Modifiers member functions
             ft::pair<iterator, bool> insert(const value_type& val)
             {
-                iterator it = find(val.first);
-                if (it != end())
-                    return ft::pair<iterator, bool>(it, false);
                 ft::pair<iterator, bool> ret;
+                size_type insrt = _container.getSize();
                 ret.first = _container.insert(val);
-                ret.second = (ret.first != end());
-                if (ret.second)
-                    _containerSize++;
+                ret.second = (_container.getSize() != insrt);
                 return ret;
             }
             iterator insert(iterator position, const value_type& val)
@@ -289,9 +282,7 @@ namespace ft
                 iterator it = find(val.first);
                 if (it != end())
                     return it;
-                _containerSize++;
-                iterator ret = _container.insert(position, val);
-                return ret;
+                return _container.insert(position, val);
             }
             template <class InputIterator>
             void insert(InputIterator first, InputIterator last)
@@ -299,19 +290,13 @@ namespace ft
                 iterator it;
                 while (first != last)
                 {
-                    it = find(first->first);
-                    if (it == end())
-                    {
-                        _container.insert(*first);
-                        _containerSize++;
-                    }
+                    _container.insert(*first);
                     ++first;
                 }
             }
             void erase(iterator position)
             {
                 _container.deleteNode(position.getNode());
-                _containerSize--;
             }
             size_type erase(const key_type& k)
             {
@@ -319,8 +304,7 @@ namespace ft
                 {
                     if (it->first == k)
                     {
-                        _container.deleteNode(it.getNode());
-                        _containerSize--;
+                        erase(it);
                         return 1;
                     }
                 }
@@ -329,28 +313,21 @@ namespace ft
             void erase(iterator first, iterator last)
             {
                 while (first != last)
-                {
                     erase(first++);
-                    _containerSize--;
-                }
             }
             void swap(map& x)
             {
-                key_compare                     tempComp = _comp;
-                size_type                       tempSize = _containerSize;
-                container_type                  tempContainer = _container;
+                key_compare     tempComp = _comp;
+                container_type  tempContainer = _container;
 
                 _comp = x._comp;
-                _containerSize = x._containerSize;
                 _container = x._container;
                 x._comp = tempComp;
-                x._containerSize = tempSize;
                 x._container = tempContainer;
             }
             void clear()
             {
                 _container.clear();
-                _containerSize = 0;
             }
     };
 //------------------------------------------------------------------------------------------------------------------------------------
