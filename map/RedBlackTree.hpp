@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/19 17:08:20 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/20 13:15:33 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -373,35 +373,44 @@ namespace ft
         // iterators
         iterator begin()
         {
-            return iterator(minimum(_root), _root);
-        }
-        iterator end()
-        {
-            return iterator(_nill, _root);
+            _nill->_right = maximum(_root);
+            return iterator(minimum(_root), getNill());
         }
         const_iterator begin() const
         {
-            return const_iterator(minimum(_root), _root);
+            _nill->_right = maximum(_root);
+            return const_iterator(minimum(_root), getNill());
+        }
+        iterator end()
+        {
+            _nill->_right = maximum(_root);
+            return iterator(_nill, getNill());
         }
         const_iterator end() const
         {
-            return const_iterator(_nill, _root);
+            _nill->_right = maximum(_root);
+            return const_iterator(_nill, getNill());
         }
+        // reverse iterators
         reverse_iterator rbegin()
         {
-            return reverse_iterator(maximum(_root), _root);
-        }
-        reverse_iterator rend()
-        {
-            return reverse_iterator(_nill, _root);
+            _nill->_right = maximum(_root);
+            return reverse_iterator(end());
         }
         const_reverse_iterator rbegin() const
         {
-            return const_reverse_iterator(maximum(_root), _root);
+            _nill->_right = maximum(_root);
+            return const_reverse_iterator(end());
+        }
+        reverse_iterator rend()
+        {
+            _nill->_right = maximum(_root);
+            return reverse_iterator(begin());
         }
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator(_nill, _root);
+            _nill->_right = maximum(_root);
+            return const_reverse_iterator(begin());
         }
     };
 }

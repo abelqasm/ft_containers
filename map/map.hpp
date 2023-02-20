@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/19 17:11:38 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/20 10:21:14 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ namespace ft
 
         typedef typename container_type::iterator                                           iterator;
         typedef typename container_type::const_iterator                                     const_iterator;
-        typedef ft::reverse_iterator<iterator>                                              reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>                                        const_reverse_iterator;
+        typedef typename container_type::reverse_iterator                                   reverse_iterator;
+        typedef typename container_type::const_reverse_iterator                             const_reverse_iterator;
 
     private:
             allocator_type                  _alloc;
@@ -130,23 +130,30 @@ namespace ft
             //reverse iterators
             reverse_iterator rbegin()
             {
-                return _container.end();
+                return _container.rbegin();
             }
             const_reverse_iterator rbegin() const
             {
-                return _container.end();
+                return _container.rbegin();
             }
             reverse_iterator rend()
             {
-                return _container.begin();
+                return _container.rend();
             }
             const_reverse_iterator rend() const
             {
-                return _container.begin();
+                return _container.rend();
             }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Element access member functions
-            mapped_type& operator[](const key_type& k);
+            mapped_type& operator[](const key_type& k)
+            {
+                iterator it = find(k);
+                if (it != end())
+                    return it->second;
+                _containerSize++;
+                return _container.insert(ft::make_pair(k, mapped_type()))->second;
+            }
             mapped_type& at (const key_type& k)
             {
                 iterator it = find(k);
@@ -206,7 +213,11 @@ namespace ft
                 }
                 return it;
             }
-            size_type count(const key_type& k) const;
+            size_type count(const key_type& k) const
+            {
+                size_type cnt = find(k) == end() ? 0 : 1;
+                return cnt;
+            }
             iterator lower_bound(const key_type& k)
             {
                 iterator it = begin();
@@ -251,8 +262,14 @@ namespace ft
                 }
                 return it;
             }
-            ft::pair<iterator,iterator> equal_range(const key_type& k);
-            ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
+            ft::pair<iterator,iterator> equal_range(const key_type& k)
+            {
+                return ft::pair<iterator,iterator>(lower_bound(k), upper_bound(k));
+            }
+            ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
+            {
+                return ft::pair<const_iterator,const_iterator>(lower_bound(k), upper_bound(k));
+            }
         //------------------------------------------------------------------------------------------------------------------------------------
             // Modifiers member functions
             ft::pair<iterator, bool> insert(const value_type& val)
@@ -272,9 +289,8 @@ namespace ft
                 iterator it = find(val.first);
                 if (it != end())
                     return it;
+                _containerSize++;
                 iterator ret = _container.insert(position, val);
-                if (ret != end())
-                    _containerSize++;
                 return ret;
             }
             template <class InputIterator>
@@ -285,9 +301,11 @@ namespace ft
                 {
                     it = find(first->first);
                     if (it == end())
+                    {
                         _container.insert(*first);
+                        _containerSize++;
+                    }
                     ++first;
-                    _containerSize++;
                 }
             }
             void erase(iterator position)

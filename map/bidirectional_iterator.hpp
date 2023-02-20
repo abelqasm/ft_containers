@@ -30,15 +30,8 @@ namespace ft
         typedef ft::node<value_type>                                      node_type;
     private:
         node_type  *_node;
-        node_type  *_root;
         node_type  *_nill;
 
-        node_type *minimum(node_type *node) const
-        {
-            while (node != _nill && node->_left != _nill)
-                node = node->_left;
-            return node;
-        }
         node_type *maximum(node_type *node) const
         {
             while (node != _nill && node->_right != _nill)
@@ -49,11 +42,8 @@ namespace ft
         bidirectional_iterator() : _node(nullptr), _nill(nullptr)
         {
         }
-        bidirectional_iterator(node_type *node, node_type *root) : _node(node), _root(root)
+        bidirectional_iterator(node_type *node, node_type *nill) : _node(node), _nill(nill)
         {
-            while (root->_left != nullptr)
-                root = root->_left;
-            _nill = root;
         }
         node_type *get() const
         {
@@ -93,9 +83,7 @@ namespace ft
         }
         bidirectional_iterator& operator++()
         {
-            if (_node == _nill)
-                _node = _nill->_left;
-            else if (_node->_right != _nill)
+            if (_node->_right != _nill)
             {
                 _node = _node->_right;
                 while (_node->_left != _nill)
@@ -112,9 +100,7 @@ namespace ft
         bidirectional_iterator operator++(int)
         {
             bidirectional_iterator tmp(*this);
-            if (_node == _nill)
-                _node = _nill->_left;
-            else if (_node->_right != _nill)
+            if (_node->_right != _nill)
             {
                 _node = _node->_right;
                 while (_node->_left != _nill)

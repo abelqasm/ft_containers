@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 17:56:50 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/19 15:08:07 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/20 11:54:28 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,12 @@ int main()
     std::cout << "ft::vector after push_back ---> ";
     for(ft::vector<int>::iterator it = ftvecpush.begin(); it != ftvecpush.end(); it++)
         std::cout << *it << " ";
+    // ft::vector<int>::const_iterator testCst = ftvecpush.begin();
+    // ft::vector<int>::iterator testCst2 = testCst;
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
+    //------------------------------------------------------------------------------------------------------------
     //----------------------std::vector--------------------------
     std::vector<int> stdvec(5, 10);
     std::vector<int>::iterator stdit = stdvec.begin();
