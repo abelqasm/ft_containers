@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 14:42:19 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 17:55:54 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,25 +187,25 @@ namespace ft
             // Operations member functions
             iterator find(const key_type& k)
             {
-                iterator it = begin();
-                while (it != end())
+                node<value_type>  *root = _container.getRoot();
+                while (root != _container.getNill())
                 {
-                    if (it->first == k)
-                        return it;
-                    ++it;
+                    if (root->_value.first == k)
+                        return iterator(root, _container.getNill());
+                    _comp(root->_value.first , k) ? root = root->_right : root = root->_left;
                 }
-                return it;
+                return end();
             }
             const_iterator find(const key_type& k) const
             {
-                const_iterator it = begin();
-                while (it != end())
+                node<value_type>  *root = _container.getRoot();
+                while (root != _container.getNill())
                 {
-                    if (it->first == k)
-                        return it;
-                    ++it;
+                    if (root->_value.first == k)
+                        return iterator(root, _container.getNill());
+                    _comp(root->_value.first , k) ? root = root->_right : root = root->_left;
                 }
-                return it;
+                return end();
             }
             size_type count(const key_type& k) const
             {
@@ -214,47 +214,67 @@ namespace ft
             }
             iterator lower_bound(const key_type& k)
             {
-                iterator it = begin();
-                while (it != end())
+                node<value_type>  *root = _container.getRoot();
+                node<value_type> *lowerBound = _container.getNill();
+                while (root != _container.getNill())
                 {
-                    if (it->first >= k)
-                        return it;
-                    ++it;
+                    if (_comp(root->_value.first , k))
+                        root = root->_right;
+                    else
+                    {
+                        lowerBound = root;
+                        root = root->_left;
+                    }
                 }
-                return it;
+                return iterator(lowerBound, _container.getNill());
             }
             const_iterator lower_bound(const key_type& k) const
             {
-                const_iterator it = begin();
-                while (it != end())
+                node<value_type>  *root = _container.getRoot();
+                node<value_type> *lowerBound = _container.getNill();
+                while (root != _container.getNill())
                 {
-                    if (it->first >= k)
-                        return it;
-                    ++it;
+                    if (_comp(root->_value.first , k))
+                        root = root->_right;
+                    else
+                    {
+                        lowerBound = root;
+                        root = root->_left;
+                    }
                 }
-                return it;
+                return iterator(lowerBound, _container.getNill());
             }
             iterator upper_bound(const key_type& k)
             {
-                iterator it = begin();
-                while (it != end())
+                node<value_type>  *root = _container.getRoot();
+                node<value_type> *upperBound = _container.getNill();
+                while (root != _container.getNill())
                 {
-                    if (it->first > k)
-                        return it;
-                    ++it;
+                    if (_comp(k , root->_value.first))
+                    {
+                        upperBound = root;
+                        root = root->_left;
+                    }
+                    else
+                        root = root->_right;
                 }
-                return it;
+                return iterator(upperBound, _container.getNill());
             }
             const_iterator upper_bound(const key_type& k) const
             {
-                const_iterator it = begin();
-                while (it != end())
+                node<value_type>  *root = _container.getRoot();
+                node<value_type> *upperBound = _container.getNill();
+                while (root != _container.getNill())
                 {
-                    if (it->first > k)
-                        return it;
-                    ++it;
+                    if (_comp(k , root->_value.first))
+                    {
+                        upperBound = root;
+                        root = root->_left;
+                    }
+                    else
+                        root = root->_right;
                 }
-                return it;
+                return iterator(upperBound, _container.getNill());
             }
             ft::pair<iterator,iterator> equal_range(const key_type& k)
             {
@@ -295,30 +315,30 @@ namespace ft
             }
             size_type erase(const key_type& k)
             {
-                for (iterator it = begin(); it != end(); ++it)
+                iterator it = find(k);
+                if (it != end())
                 {
-                    if (it->first == k)
-                    {
-                        erase(it);
-                        return 1;
-                    }
+                    erase(it);
+                    return 1;
                 }
                 return 0;
             }
             void erase(iterator first, iterator last)
             {
+                iterator it;
                 while (first != last)
-                    erase(first++);
+                {
+                    it = first;
+                    ++first;
+                    erase(it);
+                }
             }
             void swap(map& x)
             {
                 key_compare     tempComp = _comp;
-                container_type  tempContainer = _container;
 
-                _comp = x._comp;
-                _container = x._container;
+                _container.swap(x._container);
                 x._comp = tempComp;
-                x._container = tempContainer;
             }
             void clear()
             {

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 14:44:34 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 18:14:40 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,35 +304,35 @@ namespace ft
         }
     //------------------------------------------------------------------------------------------------
         // traversal
-        void inOrderTraversal()
-        {
-            node_type *root = _root;
-            if (root == _nill)
-                return ;
-            bool flag = false;
-            while (root)
-            {
-                if (!flag)
-                    root = minimum(root);
-                std::cout << root->_value << " ";
-                flag = true;
-                if (root->_right != _nill)
-                {
-                    root = root->_right;
-                    flag = false;
-                }
-                else if (root->_parent != _nill)
-                {
-                    while (root->_parent != _nill && root == root->_parent->_right)
-                        root = root->_parent;
-                    if (root->_parent == _nill)
-                        break;
-                    root = root->_parent;
-                }
-                else 
-                    break;
-            }
-        }
+        // void inOrderTraversal()
+        // {
+        //     node_type *root = _root;
+        //     if (root == _nill)
+        //         return ;
+        //     bool flag = false;
+        //     while (root)
+        //     {
+        //         if (!flag)
+        //             root = minimum(root);
+        //         std::cout << root->_value << " ";
+        //         flag = true;
+        //         if (root->_right != _nill)
+        //         {
+        //             root = root->_right;
+        //             flag = false;
+        //         }
+        //         else if (root->_parent != _nill)
+        //         {
+        //             while (root->_parent != _nill && root == root->_parent->_right)
+        //                 root = root->_parent;
+        //             if (root->_parent == _nill)
+        //                 break;
+        //             root = root->_parent;
+        //         }
+        //         else 
+        //             break;
+        //     }
+        // }
     //------------------------------------------------------------------------------------------------
         // clear
         void clear()
@@ -355,6 +355,44 @@ namespace ft
         size_t getSize() const
         {
             return _treeSize;
+        }
+    //------------------------------------------------------------------------------------------------
+        void swap(RedBlackTree &t)
+        {
+            node_type *tmpRoot = _root;
+            node_type *tmpNill = _nill;
+            size_t tmpSize = _treeSize;
+
+            _root = t._root;
+            _nill = t._nill;
+            _treeSize = t._treeSize;
+            t._root = tmpRoot;
+            t._nill = tmpNill;
+            t._treeSize = tmpSize;
+        }
+    //------------------------------------------------------------------------------------------------
+        // search
+        iterator find(const value_type &value)
+        {
+            node_type *root = _root;
+            while (root != _nill)
+            {
+                if (_equalKey(value , root->_value))
+                    return iterator(root, _root);
+                _comp(value , root->_value) ? root = root->_left : root = root->_right;
+            }
+            return iterator(_nill, _root);
+        }
+        const_iterator find(const value_type &value) const
+        {
+            node_type *root = _root;
+            while (root != _nill)
+            {
+                if (_equalKey(value , root->_value))
+                    return const_iterator(root, _root);
+                _comp(value , root->_value) ? root = root->_left : root = root->_right;
+            }
+            return const_iterator(_nill, _root);
         }
     //------------------------------------------------------------------------------------------------
         // iterators
@@ -381,22 +419,18 @@ namespace ft
         // reverse iterators
         reverse_iterator rbegin()
         {
-            _nill->_right = maximum(_root);
             return reverse_iterator(end());
         }
         const_reverse_iterator rbegin() const
         {
-            _nill->_right = maximum(_root);
             return const_reverse_iterator(end());
         }
         reverse_iterator rend()
         {
-            _nill->_right = maximum(_root);
             return reverse_iterator(begin());
         }
         const_reverse_iterator rend() const
         {
-            _nill->_right = maximum(_root);
             return const_reverse_iterator(begin());
         }
     };

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 17:02:07 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 12:03:22 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 16:35:38 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,26 @@ int main()
     std::cout << "ft::map  after reverse iterator " << std::endl;
     std::cout << "the key -> " << rit->first << " its value " << rit->second << std::endl;
     std::cout << std::endl;
-   //----------------------------------------------------------------------------------
+   //----------------------------ft::erase------------------------------------------------------
+    ft::map<char, int> ft_m;
+    ft::map<char, int>::iterator ft_it;
+    std::cout << "ft::map  before erase " << std::endl;
+    ft_m['a'] = 10;
+    ft_m['b'] = 20;
+    ft_m['c'] = 30;
+    ft_m['d'] = 40;
+    ft_m['e'] = 50;
+    ft_m['f'] = 60;
+    for (ft_it = ft_m.begin(); ft_it != ft_m.end(); ++ft_it)
+        std::cout << ft_it->first << " => " << ft_it->second << '\n';
+    ft_it = ft_m.find('b');
+    ft_m.erase(ft_it);
+    int ft_ret = ft_m.erase('c');
+    ft_it = ft_m.find('e');
+    ft_m.erase(ft_it, ft_m.end());
+    std::cout << "ft::map  after erase " << std::endl;
+    for (ft_it = ft_m.begin(); ft_it != ft_m.end(); ++ft_it)
+        std::cout << ft_it->first << " => " << ft_it->second << '\n';
 //----------------------------------------------------------------------------------std::map----------------------------------------------------------------------------------
     std::cout << "-----------------------------------------std::map-----------------------------------------" << std::endl;
     std::map<int, int> std_map;
