@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:25:53 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/18 15:36:45 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 12:08:16 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -323,7 +323,7 @@ namespace ft
                     return;
                 difference_type pos = position - begin();
                 if (_containerSize + n > _containerCapacity)
-                    n > _containerSize ? reserve(_containerCapacity + n) : reserve(_containerCapacity * 2);
+                    n > _containerCapacity ? reserve(_containerCapacity + n) : reserve(_containerCapacity * 2);
                 position = begin() + pos;
                 if (position == end())
                 {
@@ -352,7 +352,7 @@ namespace ft
                     temp.push_back(*it);
                 difference_type pos = position - begin();
                 if (_containerSize + n > _containerCapacity)
-                    n > _containerSize ? reserve(_containerCapacity + n) : reserve(_containerCapacity * 2);
+                    n > _containerCapacity ? reserve(_containerCapacity + n) : reserve(_containerCapacity * 2);
                 position = begin() + pos;
                 if (position == end())
                 {
