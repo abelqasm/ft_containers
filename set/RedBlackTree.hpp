@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 11:53:30 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 14:44:34 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ namespace ft
         node_type              *_root;
         node_type              *_nill;
         value_compare          _comp;
-        equal_key              _equal;
+        equal_key              _equalKey;
         size_t                 _treeSize;
     //------------------------------------------------------------------------------------------------
         // allocate node and construct it
@@ -194,14 +194,14 @@ namespace ft
     public:
     //------------------------------------------------------------------------------------------------
         //constructors
-        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(), const equal_key &equal = equal_key()) : _alloc(alloc), _comp(comp), _equal(equal), _treeSize(0)
+        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(), const equal_key &equal = equal_key()) : _alloc(alloc), _comp(comp), _equalKey(equal), _treeSize(0)
         {
             _nill = _alloc.allocate(1);
             _alloc.construct(_nill, node_type(value_type(), nullptr));
             _nill->_color = BLACK;
             _root = _nill;
         }
-        RedBlackTree(const RedBlackTree &t) : _alloc(t._alloc), _comp(t._comp), _equal(t._equal), _treeSize(0)
+        RedBlackTree(const RedBlackTree &t) : _alloc(t._alloc), _comp(t._comp), _equalKey(t._equalKey), _treeSize(0)
         {
             _nill = _alloc.allocate(1);
             _alloc.construct(_nill, node_type(value_type(), nullptr));
@@ -265,7 +265,7 @@ namespace ft
             while (root != _nill)
             {
                 parent = root;
-                if (_equal(value , root->_value))
+                if (_equalKey(value , root->_value))
                     return iterator(root, _root);
                 _comp(value , root->_value) ? root = root->_left : root = root->_right;
             }
