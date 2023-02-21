@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 17:02:07 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/20 19:00:48 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 12:03:22 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,15 @@ int main()
     for (ft::map<int ,int>::iterator it = ft_map2.begin(); it != ft_map2.end(); it++)
         std::cout << "the key -> " << it->first << " its value " << it->second << std::endl;
     //---------------------------------ft::reverse iterator-------------------------------------------------
-    ft::map<int, int>::reverse_iterator rit = ft_map.rbegin();
+    ft::map<int, int>::iterator rit = ft_map.insert(ft::make_pair(10, 20)).first;
     std::cout << "ft::map  after reverse iterator " << std::endl;
     std::cout << "the key -> " << rit->first << " its value " << rit->second << std::endl;
+    std::cout << std::endl;
+    rit = ft_map.end();
+    --rit;
+    std::cout << "ft::map  after reverse iterator " << std::endl;
+    std::cout << "the key -> " << rit->first << " its value " << rit->second << std::endl;
+    std::cout << std::endl;
    //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------std::map----------------------------------------------------------------------------------
     std::cout << "-----------------------------------------std::map-----------------------------------------" << std::endl;

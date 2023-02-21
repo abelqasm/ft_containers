@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 14:25:40 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 11:32:25 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 11:53:30 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "../ft/pair.hpp"
 #include "../ft/make_pair.hpp"
 #include "bidirectional_iterator.hpp"
-#include "map.hpp"
+#include "set.hpp"
 
 enum LeftRight
 {
@@ -35,7 +35,7 @@ public:
     typedef T second_argument_type;
     bool operator() (const T& x, const T& y) const
     {
-      return x.first == y.first;
+      return x == y;
     }
 };
 
@@ -194,7 +194,7 @@ namespace ft
     public:
     //------------------------------------------------------------------------------------------------
         //constructors
-        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(key_compare()), const equal_key &equal = equal_key()) : _alloc(alloc), _comp(comp), _equal(equal), _treeSize(0)
+        RedBlackTree(const node_allocatore &alloc = node_allocatore(),  const value_compare &comp =  value_compare(), const equal_key &equal = equal_key()) : _alloc(alloc), _comp(comp), _equal(equal), _treeSize(0)
         {
             _nill = _alloc.allocate(1);
             _alloc.construct(_nill, node_type(value_type(), nullptr));

@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/20 19:14:44 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 11:31:48 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,10 +279,8 @@ namespace ft
             }
             iterator insert(iterator position, const value_type& val)
             {
-                iterator it = find(val.first);
-                if (it != end())
-                    return it;
-                return _container.insert(position, val);
+                (void)position;
+                return _container.insert(val);
             }
             template <class InputIterator>
             void insert(InputIterator first, InputIterator last)
