@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:46:20 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 11:31:48 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/21 14:42:19 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,9 +146,6 @@ namespace ft
             // Element access member functions
             mapped_type& operator[](const key_type& k)
             {
-                iterator it = lower_bound(k);
-                if (it->first == k)
-                    return it->second;
                 return _container.insert(ft::make_pair(k, mapped_type()))->second;
             }
             mapped_type& at (const key_type& k)
