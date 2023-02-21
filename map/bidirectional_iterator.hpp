@@ -67,6 +67,7 @@ namespace ft
         bidirectional_iterator& operator=(const bidirectional_iterator& rhs)
         {
             _node = rhs._node;
+            _nill = rhs._nill;
             return *this;
         }
         value_type &operator*() const
