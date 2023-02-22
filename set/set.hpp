@@ -6,7 +6,7 @@
 /*   By: abelqasm <abelqasm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 11:22:48 by abelqasm          #+#    #+#             */
-/*   Updated: 2023/02/21 17:58:13 by abelqasm         ###   ########.fr       */
+/*   Updated: 2023/02/22 11:53:31 by abelqasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ namespace ft
                 node<value_type> *lowerBound = _container.getNill();
                 while (root != _container.getNill())
                 {
-                    if (_comp(root->_value.first , k))
+                    if (_comp(root->_value , k))
                         root = root->_right;
                     else
                     {
@@ -198,7 +198,7 @@ namespace ft
                 node<value_type> *lowerBound = _container.getNill();
                 while (root != _container.getNill())
                 {
-                    if (_comp(root->_value.first , k))
+                    if (_comp(root->_value , k))
                         root = root->_right;
                     else
                     {
@@ -214,7 +214,7 @@ namespace ft
                 node<value_type> *upperBound = _container.getNill();
                 while (root != _container.getNill())
                 {
-                    if (_comp(k , root->_value.first))
+                    if (_comp(k , root->_value))
                     {
                         upperBound = root;
                         root = root->_left;
@@ -230,7 +230,7 @@ namespace ft
                 node<value_type> *upperBound = _container.getNill();
                 while (root != _container.getNill())
                 {
-                    if (_comp(k , root->_value.first))
+                    if (_comp(k , root->_value))
                     {
                         upperBound = root;
                         root = root->_left;
